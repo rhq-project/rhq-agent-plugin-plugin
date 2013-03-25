@@ -12,6 +12,7 @@
   <name>RHQ Agent Plugin Plugin</name>
   <description>A Maven plugin to help building RHQ agent plugins.</description>
   <inceptionYear>2013</inceptionYear>
+  <url>https://github.com/tsegismont/rhq-agent-plugin-plugin</url>
 
   <organization>
     <name>Red Hat, Inc.</name>
@@ -24,6 +25,12 @@
       <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
     </license>
   </licenses>
+
+  <scm>
+    <connection>scm:git:git://github.com/tsegismont/rhq-agent-plugin-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/tsegismont/rhq-agent-plugin-plugin.git</developerConnection>
+    <url>https://github.com/tsegismont/rhq-agent-plugin-plugin</url>
+  </scm>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -55,6 +62,7 @@
 
   <build>
     <plugins>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
@@ -71,7 +79,104 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.0</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.4</version>
+      </plugin>
+
     </plugins>
+
+    <extensions>
+
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-scm</artifactId>
+        <version>2.4</version>
+      </extension>
+
+      <extension>
+        <groupId>org.apache.maven.scm</groupId>
+        <artifactId>maven-scm-manager-plexus</artifactId>
+        <version>1.8.1</version>
+      </extension>
+
+      <extension>
+        <groupId>org.apache.maven.scm</groupId>
+        <artifactId>maven-scm-provider-gitexe</artifactId>
+        <version>1.8.1</version>
+      </extension>
+
+    </extensions>
+
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>3.2</version>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <developers>
+    <developer>
+      <id>tsegismont</id>
+      <name>Thomas Segismont</name>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+
+  <distributionManagement>
+    <repository>
+      <id>bintray-tsegismont-rhq-agent-plugin-plugin</id>
+      <url>https://api.bintray.com/maven/tsegismont/rhq-maven-plugins/rhq-agent-plugin-plugin</url>
+    </repository>
+    <site>
+      <id>github-pages-tsegismont-rhq-agent-plugin-plugin</id>
+      <url>scm:git:ssh://git@github.com/tsegismont/rhq-agent-plugin-plugin.git</url>
+    </site>
+  </distributionManagement>
 
 </project>
