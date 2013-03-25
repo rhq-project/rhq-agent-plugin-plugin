@@ -126,28 +126,6 @@
 
     </plugins>
 
-    <extensions>
-
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-scm</artifactId>
-        <version>2.4</version>
-      </extension>
-
-      <extension>
-        <groupId>org.apache.maven.scm</groupId>
-        <artifactId>maven-scm-manager-plexus</artifactId>
-        <version>1.8.1</version>
-      </extension>
-
-      <extension>
-        <groupId>org.apache.maven.scm</groupId>
-        <artifactId>maven-scm-provider-gitexe</artifactId>
-        <version>1.8.1</version>
-      </extension>
-
-    </extensions>
-
   </build>
 
   <reporting>
@@ -173,10 +151,6 @@
       <id>bintray-tsegismont-rhq-agent-plugin-plugin</id>
       <url>https://api.bintray.com/maven/tsegismont/rhq-maven-plugins/rhq-agent-plugin-plugin</url>
     </repository>
-    <site>
-      <id>github-pages-tsegismont-rhq-agent-plugin-plugin</id>
-      <url>scm:git:ssh://git@github.com/tsegismont/rhq-agent-plugin-plugin.git</url>
-    </site>
   </distributionManagement>
 
 </project>
