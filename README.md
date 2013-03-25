@@ -1,4 +1,3 @@
-
 RHQ Agent Plugin Plugin
 ===
 
@@ -141,10 +140,11 @@ Sample POM
                 </executions>
             </plugin>
 
+            <!-- Here comes the RHQ agent plugin plugin -->
             <plugin>
                 <groupId>org.rhq.maven.plugins</groupId>
                 <artifactId>rhq-agent-plugin-plugin</artifactId>
-                <version>0.1-SNAPSHOT</version>
+                <version>0.2</version>
                 <!-- Tell Maven that this plugin will extend the standard lifecycle and packaging -->
                 <!-- Without this the build fails to recognize the custom packaging -->
                 <extensions>true</extensions>
