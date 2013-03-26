@@ -15,9 +15,33 @@ Usage
 
 Currently, this plugin is [published on bintray](https://bintray.com/repo/browse/tsegismont/rhq-maven-plugins)
 
-Configure your Maven settings file to use this as a plugin repository:
+Configure your Maven settings file to use this plugin repository:
 
-http://dl.bintray.com/v1/content/tsegismont/rhq-maven-plugins
+```xml
+<settings>
+ ...
+  <profiles>
+    ...
+    <profile>
+      <id>tsegismont-rhq-maven-plugins</id>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>tsegismont-rhq-maven-plugins</id>
+          <url>https://dl.bintray.com/content/tsegismont/rhq-maven-plugins</url>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+    ...
+  </profiles>
+  ...
+  <activeProfiles>
+    ...
+    <activeProfile>tsegismont-rhq-maven-plugins</activeProfile>
+    ...
+  </activeProfiles>
+ ...
+</settings>
+```
 
 Sample POM
 ===
