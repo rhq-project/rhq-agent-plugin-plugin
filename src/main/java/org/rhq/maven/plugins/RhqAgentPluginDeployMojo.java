@@ -52,9 +52,9 @@ public class RhqAgentPluginDeployMojo extends AbstractMojo {
     private String finalName;
 
     /**
-     * The lib directory (where standard plugins put compiled classes and resources)
+     * The directory where the local RHQ development server pickups plugin archives.
      */
-    @Parameter(defaultValue = "${rhq.agentPlugin.deployDirectory}", required = true)
+    @Parameter(required = true)
     private File deployDirectory;
 
     @Override

@@ -10,6 +10,12 @@ Documentation
 
 [Maven generated plugin documentation](http://tsegismont.github.com/rhq-agent-plugin-plugin/plugin-info.html)
 
+Getting help
+===
+
+[RHQ Forum](https://community.jboss.org/en/rhq?view=discussions)
+[RHQ Users Mailing List](http://lists.fedorahosted.org/mailman/listinfo/rhq-users)
+
 Usage
 ===
 
@@ -42,6 +48,8 @@ Configure your Maven settings file to use this plugin repository:
  ...
 </settings>
 ```
+
+Then use the sample POM below for your plugin project.
 
 Sample POM
 ===
