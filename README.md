@@ -69,6 +69,7 @@ Sample POM
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <rhq.version>4.9.0</rhq.version>
     </properties>
 
     <dependencies>
@@ -78,21 +79,21 @@ Sample POM
         <dependency>
             <groupId>org.rhq</groupId>
             <artifactId>rhq-core-domain</artifactId>
-            <version>4.6.0</version>
+            <version>${rhq.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.rhq</groupId>
             <artifactId>rhq-core-plugin-api</artifactId>
-            <version>4.6.0</version>
+            <version>${rhq.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.rhq</groupId>
             <artifactId>rhq-core-native-system</artifactId>
-            <version>4.6.0</version>
+            <version>${rhq.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -103,7 +104,7 @@ Sample POM
             <scope>provided</scope>
         </dependency>
 
-        <!-- Dependencies required by my plugin -->
+        <!-- Dependencies required by your plugin -->
         <!-- All dependencies under RUNTIME scope will be included in the plugin archive -->
 
         <dependency>
@@ -132,21 +133,21 @@ Sample POM
         <dependency>
             <groupId>org.rhq</groupId>
             <artifactId>rhq-core-plugin-container</artifactId>
-            <version>4.6.0</version>
+            <version>${rhq.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.rhq</groupId>
             <artifactId>test-utils</artifactId>
-            <version>4.6.0</version>
+            <version>${rhq.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.rhq</groupId>
             <artifactId>rhq-core-plugin-container</artifactId>
-            <version>4.6.0</version>
+            <version>${rhq.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -206,9 +207,29 @@ Sample POM
                         <goals>
                             <goal>rhq-agent-plugin-deploy</goal>
                         </goals>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <configuration>
                             <deployDirectory>/path/to/dev/container/deploy/dir</deployDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>upload-to-rhq-server</id>
+                        <goals>
+                            <goal>rhq-agent-plugin-upload</goal>
+                        </goals>
+                        <phase>install</phase>
+                        <configuration>
+                            <!-- Optional, defaults to http -->
+                            <scheme>http</scheme>
+                            <host>rhqserver.mycorp.int</host>
+                            <port>7080</port> <!-- Optional, defaults to 7080 -->
+                            <!-- The user must have appropriate permissions (MANAGE_SETTINGS) -->
+                            <username>rhqadmin</username>
+                            <password>secret</password>
+                            <!-- Whether a plugin scan should be triggered on the server after upload. Optional, defaults to true -->
+                            <startScan>7080</startScan>
+                            <!-- Whether to fail the build if an error occurs while uploading. Optional, defaults to false -->
+                            <failOnError>false</failOnError>
                         </configuration>
                     </execution>
                 </executions>
