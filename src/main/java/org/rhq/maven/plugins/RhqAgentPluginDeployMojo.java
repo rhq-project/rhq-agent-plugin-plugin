@@ -33,11 +33,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
- * Deploy a freshly built RHQ Agent PLugin to an RHQ container.
+ * Deploy a freshly built RHQ Agent Plugin to an RHQ container.
  *
  * @author Thomas Segismont
  */
-@Mojo(name = "rhq-agent-plugin-deploy", defaultPhase = LifecyclePhase.INSTALL, threadSafe = true)
+@Mojo(name = "rhq-agent-plugin-deploy", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true)
 public class RhqAgentPluginDeployMojo extends AbstractMojo {
 
     /**
@@ -71,8 +71,9 @@ public class RhqAgentPluginDeployMojo extends AbstractMojo {
             throw new MojoExecutionException("No permission to write to " + deployDirectory);
         }
         try {
-            getLog().info("Copying " + agentPluginArchive + " to " + deployDirectory);
+            // Copy plugin archive to the plugins directory of a local RHQ server
             FileUtils.copyFileToDirectory(agentPluginArchive, deployDirectory);
+            getLog().info("Copied " + agentPluginArchive + " to " + deployDirectory);
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to copy " + agentPluginArchive + " to " + deployDirectory);
         }

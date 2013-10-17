@@ -52,11 +52,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Upload a freshly built RHQ Agent PLugin to an RHQ container.
+ * Upload a freshly built RHQ Agent Plugin to an RHQ container.
  *
  * @author Thomas Segismont
  */
-@Mojo(name = "rhq-agent-plugin-upload", defaultPhase = LifecyclePhase.INSTALL, threadSafe = true)
+@Mojo(name = "rhq-agent-plugin-upload", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true)
 public class RhqAgentPluginUploadMojo extends AbstractMojo {
 
     private static final String REST_CONTENT_URI = "/rest/content";
@@ -116,7 +116,7 @@ public class RhqAgentPluginUploadMojo extends AbstractMojo {
     /**
      * Whether to fail the build if an error occurs while uploading.
      */
-    @Parameter(defaultValue = "false")
+    @Parameter(defaultValue = "true")
     private boolean failOnError;
 
     @Override
@@ -126,6 +126,7 @@ public class RhqAgentPluginUploadMojo extends AbstractMojo {
             throw new MojoExecutionException("Agent plugin archive does not exist: " + agentPluginArchive);
         }
 
+        // Prepare HttpClient for plugin upload
         ClientConnectionManager httpConnectionManager = new BasicClientConnectionManager();
         DefaultHttpClient httpClient = new DefaultHttpClient(httpConnectionManager);
         HttpParams httpParams = httpClient.getParams();
@@ -134,31 +135,36 @@ public class RhqAgentPluginUploadMojo extends AbstractMojo {
         httpClient.getCredentialsProvider().setCredentials(new AuthScope(host, port),
                 new UsernamePasswordCredentials(username, password));
 
-        HttpPost uploadRequest = null;
-        HttpPut setAsPluginRequest = null;
+        HttpPost uploadContentRequest = null;
+        HttpPut moveContentToPluginsDirRequest = null;
         try {
-            URI uploadUri = getUploadUri();
-            uploadRequest = new HttpPost(uploadUri);
-            uploadRequest.setEntity(new FileEntity(agentPluginArchive, ContentType.APPLICATION_OCTET_STREAM));
-            uploadRequest.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            HttpResponse uploadResponse = httpClient.execute(uploadRequest);
-            if (uploadResponse.getStatusLine().getStatusCode() != HttpStatus.SC_CREATED) {
-                handleProblem(uploadResponse.getStatusLine().toString());
+            // Upload plugin content
+            URI uploadContentUri = buildUploadContentUri();
+            uploadContentRequest = new HttpPost(uploadContentUri);
+            uploadContentRequest.setEntity(new FileEntity(agentPluginArchive, ContentType.APPLICATION_OCTET_STREAM));
+            uploadContentRequest.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            HttpResponse uploadContentResponse = httpClient.execute(uploadContentRequest);
+            if (uploadContentResponse.getStatusLine().getStatusCode() != HttpStatus.SC_CREATED) {
+                handleProblem(uploadContentResponse.getStatusLine().toString());
             }
+            JSONObject uploadContentResponseJsonObject = new JSONObject(EntityUtils.toString(uploadContentResponse
+                    .getEntity()));
+            // Read the content handle value in JSON response 
+            String contentHandle = (String) uploadContentResponseJsonObject.get("value");
             getLog().info("Uploaded " + agentPluginArchive);
-            JSONObject uploadResponseJsonObject = new JSONObject(EntityUtils.toString(uploadResponse.getEntity()));
-            String contentHandle = (String) uploadResponseJsonObject.get("value");
 
-            URI setAsPluginUri = getSetAsPluginUri(contentHandle);
-            setAsPluginRequest = new HttpPut(setAsPluginUri);
-            setAsPluginRequest.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
-            HttpResponse setAsPluginResponse = httpClient.execute(setAsPluginRequest);
-            if (setAsPluginResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                handleProblem(setAsPluginResponse.getStatusLine().toString());
+            // Request uploaded to be moved to the plugins directory
+            URI moveContentToPluginsDirUri = buildMoveContentToPluginsDirUri(contentHandle);
+            moveContentToPluginsDirRequest = new HttpPut(moveContentToPluginsDirUri);
+            moveContentToPluginsDirRequest.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+            HttpResponse moveContentToPluginsDirResponse = httpClient.execute(moveContentToPluginsDirRequest);
+            if (moveContentToPluginsDirResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                handleProblem(moveContentToPluginsDirResponse.getStatusLine().toString());
             }
-            getLog().info("Uploaded content moved to plugins directory");
             if (startScan) {
-                getLog().info("Triggered plugin scan");
+                getLog().info("Moved uploaded content to plugins directory and triggered plugin scan");
+            } else {
+                getLog().info("Moved uploaded content to plugins directory");
             }
         } catch (IOException e) {
             handleException(e);
@@ -167,11 +173,11 @@ public class RhqAgentPluginUploadMojo extends AbstractMojo {
         } catch (URISyntaxException e) {
             handleException(e);
         } finally {
-            if (uploadRequest != null) {
-                uploadRequest.abort();
+            if (uploadContentRequest != null) {
+                uploadContentRequest.abort();
             }
-            if (setAsPluginRequest != null) {
-                setAsPluginRequest.abort();
+            if (moveContentToPluginsDirRequest != null) {
+                moveContentToPluginsDirRequest.abort();
             }
             httpConnectionManager.shutdown();
         }
@@ -181,17 +187,17 @@ public class RhqAgentPluginUploadMojo extends AbstractMojo {
         if (failOnError) {
             throw new MojoExecutionException(message);
         }
-        getLog().warn(message);
+        getLog().error(message);
     }
 
     private void handleException(Exception e) throws MojoExecutionException {
         if (failOnError) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
-        getLog().warn(e.getMessage(), e);
+        getLog().error(e.getMessage(), e);
     }
 
-    private URI getUploadUri() throws URISyntaxException {
+    private URI buildUploadContentUri() throws URISyntaxException {
         return new URIBuilder() //
                 .setScheme(scheme) //
                 .setHost(host) //
@@ -200,7 +206,7 @@ public class RhqAgentPluginUploadMojo extends AbstractMojo {
                 .build();
     }
 
-    private URI getSetAsPluginUri(String contentHandle) throws URISyntaxException {
+    private URI buildMoveContentToPluginsDirUri(String contentHandle) throws URISyntaxException {
         return new URIBuilder() //
                 .setScheme(scheme) //
                 .setHost(host) //

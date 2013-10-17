@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plugin name="TestPlugin"
+        displayName="Test Plugin"
+        package="test.plugin"
+        description="A Test Plugin"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="urn:xmlns:rhq-plugin"
+        xmlns:c="urn:xmlns:rhq-configuration">
+
+  <service name="SimpleService"
+           discovery="SimpleServiceDiscoveryComponent"
+           class="SimpleServiceComponent"
+           supportsManualAdd="true"
+           description="A Simple Service">
+
+    <plugin-configuration>
+      <c:simple-property name="prop1" description="Property 1" />
+      <c:simple-property name="prop2" description="Property 2" />
+    </plugin-configuration>
+
+    <metric property="aTrait" displayType="summary" dataType="trait" description="A Trait"/>
+    <metric property="aMetric" units="milliseconds" displayType="summary" description="A Metric"/>
+
+  </service>
+
+</plugin>

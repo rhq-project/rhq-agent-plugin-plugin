@@ -44,7 +44,7 @@ import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
- * Package a freshly built RHQ Agent PLugin.
+ * Package a freshly built RHQ Agent Plugin.
  *
  * @author Thomas Segismont
  */
@@ -65,7 +65,7 @@ public class RhqAgentPluginMojo extends AbstractMojo {
     private File outputDirectory;
 
     /**
-     * The lib directory (where standard plugins put compiled classes and resources)
+     * The lib directory (where to copy the agent plugin dependencies)
      */
     @Parameter(defaultValue = "${project.build.directory}/lib", required = true)
     private File libDirectory;
@@ -96,18 +96,16 @@ public class RhqAgentPluginMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         // Create the package and set it as the main project artifact
-        project.getArtifact().setFile(createAgentPluginArchive());
+        File agentPluginArchive = createAgentPluginArchive();
+        project.getArtifact().setFile(agentPluginArchive);
     }
 
     private File createAgentPluginArchive() throws MojoExecutionException {
 
-        // Create the Java IO File denoting the project package
+        // Get the Java IO File denoting the project package
         File agentPluginArchive = getAgentPluginArchiveFile(buildDirectory, finalName);
-        if (getLog().isDebugEnabled()) {
-            getLog().debug("Starting packaging of the plugin to file " + agentPluginArchive);
-        }
 
-        // Configure the Maven archiver to use JAR archive utility 
+        // Configure the Maven archiver to use JAR archive utility
         MavenArchiver archiver = new MavenArchiver();
         archiver.setArchiver(jarArchiver);
         archiver.setOutputFile(agentPluginArchive);
@@ -124,8 +122,8 @@ public class RhqAgentPluginMojo extends AbstractMojo {
         try {
 
             // Request compiled classes to be added to the archive
-            // TODO : manage includes and excludes
             archiver.getArchiver().addDirectory(outputDirectory);
+            getLog().info("Added " + outputDirectory + " content to the plugin archive");
 
             // Now request JAR dependencies of scope runtime to get included
             // This call to #getArtifacts only works because the mojo requires dependency resolution of scope RUNTIME
@@ -134,12 +132,10 @@ public class RhqAgentPluginMojo extends AbstractMojo {
             while (projectArtifacts.hasNext()) {
                 Artifact artifact = (Artifact) projectArtifacts.next();
                 if (getLog().isDebugEnabled()) {
-                    getLog().info("Found project artifact: " + artifact);
+                    getLog().debug("Found project artifact: " + artifact);
                 }
                 if (!artifact.isOptional() && artifact.getType().equals("jar") && artifactFilter.include(artifact)) {
-                    if (getLog().isDebugEnabled()) {
-                        getLog().info("Will add " + artifact + " to the plugin archive");
-                    }
+                    getLog().info("Added " + artifact + " library to the plugin archive");
                     FileUtils.copyFileToDirectory(artifact.getFile(), libDirectory);
                 }
             }
@@ -147,6 +143,8 @@ public class RhqAgentPluginMojo extends AbstractMojo {
             if (libDirectory.exists()) {
                 // Request all found runtime dependencies to be added to the archive under the 'lib' directory
                 archiver.getArchiver().addDirectory(libDirectory, "lib/");
+            } else {
+                getLog().info("No libraries added to the plugin archive");
             }
 
             archiver.createArchive(session, project, archive);

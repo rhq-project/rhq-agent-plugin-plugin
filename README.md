@@ -163,6 +163,7 @@ Sample POM
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
                 <executions>
                     <execution>
                         <phase>initialize</phase>
@@ -203,11 +204,21 @@ Sample POM
                 <executions>
                     <!-- Here we configure the execution of optional mojos -->
                     <execution>
+                        <id>validate-the-plugin</id>
+                        <goals>
+                            <goal>rhq-agent-plugin-validate</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <rhqVersion>${rhq.version}</rhqVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>deploy-to-dev-container</id>
                         <goals>
                             <goal>rhq-agent-plugin-deploy</goal>
                         </goals>
-                        <phase>install</phase>
+                        <phase>package</phase>
                         <configuration>
                             <deployDirectory>/path/to/dev/container/deploy/dir</deployDirectory>
                         </configuration>
@@ -217,7 +228,7 @@ Sample POM
                         <goals>
                             <goal>rhq-agent-plugin-upload</goal>
                         </goals>
-                        <phase>install</phase>
+                        <phase>package</phase>
                         <configuration>
                             <!-- Optional, defaults to http -->
                             <scheme>http</scheme>
