@@ -17,7 +17,13 @@
       
     <script type="text/javascript" src="./js/apache-maven-fluido-1.3.0.min.js"></script>
 
-    
+                          
+        
+<link rel="icon" type="image/x-icon" href="favicon.ico"/>
+                      
+        
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+          
             </head>
         <body class="topBarDisabled">
           
@@ -43,7 +49,7 @@
                 
                     
                   <li id="publishDate">Last Published: 2013-10-18</li>
-                  <li class="divider">|</li> <li id="projectVersion">Version: 0.4-SNAPSHOT</li>
+                  <li class="divider">|</li> <li id="projectVersion">Version: 0.4</li>
                       
                 
                     
@@ -96,23 +102,21 @@
                   
       <li>
     
-                          <a href="deploy.html" title="Deploying to a local RHQ server">
-          <i class="none"></i>
-        Deploying to a local RHQ server</a>
-            </li>
-                  
-      <li>
-    
-                          <a href="upload.html" title="Uploading to a remote RHQ server">
-          <i class="none"></i>
-        Uploading to a remote RHQ server</a>
-            </li>
-                  
-      <li>
-    
                           <a href="validating.html" title="Validating">
           <i class="none"></i>
         Validating</a>
+            </li>
+                  
+      <li class="active">
+    
+            <a href="#"><i class="none"></i>Deploying to a local RHQ server</a>
+          </li>
+                  
+      <li>
+    
+                          <a href="uploading.html" title="Uploading to a remote RHQ server">
+          <i class="none"></i>
+        Uploading to a remote RHQ server</a>
             </li>
                               <li class="nav-header">Reference</li>
                                 
@@ -165,7 +169,23 @@
         <div id="bodyColumn"  class="span9" >
                                   
             <div class="section">
-<h2>Validating<a name="Validating"></a></h2></div>
+<h2>Deploying to a local RHQ server<a name="Deploying_to_a_local_RHQ_server"></a></h2>
+<p>You will most probably install an RHQ Server and an Agent on your development box in order to test your Agent plugin. The <i>deploy</i> goal will copy your freshly built plugin to your local server plugins directory.</p>
+<div class="section">
+<h3>Plugin Execution Sample<a name="Plugin_Execution_Sample"></a></h3>
+<div class="source">
+<pre>    ...
+    &lt;execution&gt;
+        &lt;id&gt;deploy-to-dev-container&lt;/id&gt;
+        &lt;goals&gt;
+            &lt;goal&gt;deploy&lt;/goal&gt;
+        &lt;/goals&gt;
+        &lt;phase&gt;package&lt;/phase&gt;
+        &lt;configuration&gt;
+            &lt;deployDirectory&gt;/path/to/dev/container/plugins/dir&lt;/deployDirectory&gt;
+        &lt;/configuration&gt;
+    &lt;/execution&gt;
+    ...</pre></div></div></div>
                   </div>
             </div>
           </div>

@@ -10,7 +10,7 @@
     <meta name="Date-Revision-yyyymmdd" content="20131018" />
     <meta http-equiv="Content-Language" content="en" />
     <title>RHQ Agent Plugin Plugin - 
-    rhq-agent:rhq-agent-plugin-upload</title>
+    rhq-agent:deploy</title>
     <link rel="stylesheet" href="./css/apache-maven-fluido-1.3.0.min.css" />
     <link rel="stylesheet" href="./css/site.css" />
     <link rel="stylesheet" href="./css/print.css" media="print" />
@@ -18,7 +18,13 @@
       
     <script type="text/javascript" src="./js/apache-maven-fluido-1.3.0.min.js"></script>
 
-    
+                          
+        
+<link rel="icon" type="image/x-icon" href="favicon.ico"/>
+                      
+        
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+          
             </head>
         <body class="topBarDisabled">
           
@@ -44,7 +50,7 @@
                 
                     
                   <li id="publishDate">Last Published: 2013-10-18</li>
-                  <li class="divider">|</li> <li id="projectVersion">Version: 0.4-SNAPSHOT</li>
+                  <li class="divider">|</li> <li id="projectVersion">Version: 0.4</li>
                       
                 
                     
@@ -97,23 +103,23 @@
                   
       <li>
     
-                          <a href="deploy.html" title="Deploying to a local RHQ server">
+                          <a href="validating.html" title="Validating">
+          <i class="none"></i>
+        Validating</a>
+            </li>
+                  
+      <li>
+    
+                          <a href="deploying.html" title="Deploying to a local RHQ server">
           <i class="none"></i>
         Deploying to a local RHQ server</a>
             </li>
                   
       <li>
     
-                          <a href="upload.html" title="Uploading to a remote RHQ server">
+                          <a href="uploading.html" title="Uploading to a remote RHQ server">
           <i class="none"></i>
         Uploading to a remote RHQ server</a>
-            </li>
-                  
-      <li>
-    
-                          <a href="validating.html" title="Validating">
-          <i class="none"></i>
-        Validating</a>
             </li>
                               <li class="nav-header">Reference</li>
                                 
@@ -168,15 +174,15 @@
             
   
     <div class="section">
-<h2>rhq-agent:rhq-agent-plugin-upload<a name="rhq-agent:rhq-agent-plugin-upload"></a></h2>
+<h2>rhq-agent:deploy<a name="rhq-agent:deploy"></a></h2>
       
 <p><b>Full name</b>:</p>
       
-<p>org.rhq.maven.plugins:rhq-agent-plugin-plugin:0.4-SNAPSHOT:rhq-agent-plugin-upload</p>
+<p>org.rhq.maven.plugins:rhq-agent-plugin-plugin:0.4:deploy</p>
       
 <p><b>Description</b>:</p>
       
-<div>Upload a freshly built RHQ Agent Plugin to an RHQ container.</div>
+<div>Deploy a freshly built RHQ Agent Plugin to an RHQ container.</div>
       
 <p><b>Attributes</b>:</p>
       
@@ -207,99 +213,14 @@
           
 <tr class="b">
             
-<td><b><a href="#host">host</a></b></td>
+<td><b><a href="#deployDirectory">deployDirectory</a></b></td>
             
-<td><tt>String</tt></td>
-            
-<td><tt>-</tt></td>
-            
-<td>Remote RHQ server host.<br /></td>
-          </tr>
-          
-<tr class="a">
-            
-<td><b><a href="#password">password</a></b></td>
-            
-<td><tt>String</tt></td>
+<td><tt>File</tt></td>
             
 <td><tt>-</tt></td>
             
-<td>Authentication password.<br /></td>
-          </tr>
-          
-<tr class="b">
-            
-<td><b><a href="#username">username</a></b></td>
-            
-<td><tt>String</tt></td>
-            
-<td><tt>-</tt></td>
-            
-<td>Authentication user name. The user must have appropriate
-permissions (MANAGE_SETTINGS).<br /></td>
-          </tr>
-        </table>
-      </div>
-      
-<div class="section">
-<h3>Optional Parameters<a name="Optional_Parameters"></a></h3>
-        
-<table class="table table-striped" border="0">
-          
-<tr class="a">
-            
-<th>Name</th>
-            
-<th>Type</th>
-            
-<th>Since</th>
-            
-<th>Description</th>
-          </tr>
-          
-<tr class="b">
-            
-<td><b><a href="#failOnError">failOnError</a></b></td>
-            
-<td><tt>boolean</tt></td>
-            
-<td><tt>-</tt></td>
-            
-<td>Whether to fail the build if an error occurs while uploading.<br /><b>Default value is</b>: <tt>true</tt>.<br /></td>
-          </tr>
-          
-<tr class="a">
-            
-<td><b><a href="#port">port</a></b></td>
-            
-<td><tt>int</tt></td>
-            
-<td><tt>-</tt></td>
-            
-<td>Remote RHQ server port.<br /><b>Default value is</b>: <tt>7080</tt>.<br /></td>
-          </tr>
-          
-<tr class="b">
-            
-<td><b><a href="#scheme">scheme</a></b></td>
-            
-<td><tt>String</tt></td>
-            
-<td><tt>-</tt></td>
-            
-<td>The scheme to use to communicate with the remote RHQ server.<br /><b>Default value is</b>: <tt>http</tt>.<br /></td>
-          </tr>
-          
-<tr class="a">
-            
-<td><b><a href="#startScan">startScan</a></b></td>
-            
-<td><tt>boolean</tt></td>
-            
-<td><tt>-</tt></td>
-            
-<td>Whether a plugin scan should be triggered on the server after
-upload.<br /><b>Default value is</b>: <tt>true</tt>.<br /></td>
+<td>The directory where the local RHQ development server pickups plugin
+archives.<br /></td>
           </tr>
         </table>
       </div>
@@ -307,83 +228,14 @@ upload.<br /><b>Default value is</b>: <tt>true</tt>.<br /></td>
 <div class="section">
 <h3>Parameter Details<a name="Parameter_Details"></a></h3>
         
-<p><b><a name="failOnError">failOnError</a>:</b></p>
+<p><b><a name="deployDirectory">deployDirectory</a>:</b></p>
         
-<div>Whether to fail the build if an error occurs while uploading.</div>
-        
-<ul>
-          
-<li><b>Type</b>: <tt>boolean</tt></li>
-          
-<li><b>Required</b>: <tt>No</tt></li>
-          
-<li><b>Default</b>: <tt>true</tt></li>
-        </ul><hr />
-<p><b><a name="host">host</a>:</b></p>
-        
-<div>Remote RHQ server host.</div>
+<div>The directory where the local RHQ development server pickups plugin
+archives.</div>
         
 <ul>
           
-<li><b>Type</b>: <tt>java.lang.String</tt></li>
-          
-<li><b>Required</b>: <tt>Yes</tt></li>
-        </ul><hr />
-<p><b><a name="password">password</a>:</b></p>
-        
-<div>Authentication password.</div>
-        
-<ul>
-          
-<li><b>Type</b>: <tt>java.lang.String</tt></li>
-          
-<li><b>Required</b>: <tt>Yes</tt></li>
-        </ul><hr />
-<p><b><a name="port">port</a>:</b></p>
-        
-<div>Remote RHQ server port.</div>
-        
-<ul>
-          
-<li><b>Type</b>: <tt>int</tt></li>
-          
-<li><b>Required</b>: <tt>No</tt></li>
-          
-<li><b>Default</b>: <tt>7080</tt></li>
-        </ul><hr />
-<p><b><a name="scheme">scheme</a>:</b></p>
-        
-<div>The scheme to use to communicate with the remote RHQ server.</div>
-        
-<ul>
-          
-<li><b>Type</b>: <tt>java.lang.String</tt></li>
-          
-<li><b>Required</b>: <tt>No</tt></li>
-          
-<li><b>Default</b>: <tt>http</tt></li>
-        </ul><hr />
-<p><b><a name="startScan">startScan</a>:</b></p>
-        
-<div>Whether a plugin scan should be triggered on the server after
-upload.</div>
-        
-<ul>
-          
-<li><b>Type</b>: <tt>boolean</tt></li>
-          
-<li><b>Required</b>: <tt>No</tt></li>
-          
-<li><b>Default</b>: <tt>true</tt></li>
-        </ul><hr />
-<p><b><a name="username">username</a>:</b></p>
-        
-<div>Authentication user name. The user must have appropriate
-permissions (MANAGE_SETTINGS).</div>
-        
-<ul>
-          
-<li><b>Type</b>: <tt>java.lang.String</tt></li>
+<li><b>Type</b>: <tt>java.io.File</tt></li>
           
 <li><b>Required</b>: <tt>Yes</tt></li>
         </ul>
