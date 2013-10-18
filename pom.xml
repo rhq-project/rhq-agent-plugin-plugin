@@ -12,9 +12,9 @@
   <description>A Maven plugin to help building RHQ agent plugins.</description>
 
   <scm>
-    <connection>scm:git:git://github.com/tsegismont/rhq-agent-plugin-plugin.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/tsegismont/rhq-agent-plugin-plugin.git</developerConnection>
-    <url>https://github.com/tsegismont/rhq-agent-plugin-plugin</url>
+    <connection>scm:git:git://github.com/rhq-project/rhq-agent-plugin-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/rhq-project/rhq-agent-plugin-plugin.git</developerConnection>
+    <url>https://github.com/rhq-project/rhq-agent-plugin-plugin</url>
     <tag>HEAD</tag>
   </scm>
 
@@ -155,7 +155,8 @@
         <artifactId>maven-release-plugin</artifactId>
         <version>2.4</version>
         <configuration>
-          <preparationGoals>clean verify site</preparationGoals>
+          <tagNameFormat>v@{project.version}</tagNameFormat>
+          <preparationGoals>verify site</preparationGoals>
           <goals>deploy site com.github.github:site-maven-plugin:site</goals>
         </configuration>
       </plugin>
@@ -181,7 +182,7 @@
         <version>0.9</version>
         <configuration>
           <message>Publishing site to GitHub Pages</message>
-          <repositoryOwner>tsegismont</repositoryOwner>
+          <repositoryOwner>rhq-project</repositoryOwner>
           <repositoryName>rhq-agent-plugin-plugin</repositoryName>
           <server>github</server>
           <noJekyll>true</noJekyll>
@@ -203,13 +204,13 @@
   </reporting>
 
   <inceptionYear>2013</inceptionYear>
-  <url>https://github.com/tsegismont/rhq-agent-plugin-plugin</url>
+  <url>http://rhq-project.github.io/rhq-agent-plugin-plugin/</url>
 
   <developers>
     <developer>
       <id>tsegismont</id>
       <name>Thomas Segismont</name>
-      <timezone>+1</timezone>
+      <timezone>Europe/Paris</timezone>
     </developer>
   </developers>
 
@@ -227,7 +228,7 @@
 
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>https://github.com/tsegismont/rhq-agent-plugin-plugin/issues</url>
+    <url>https://github.com/rhq-project/rhq-agent-plugin-plugin/issues</url>
   </issueManagement>
 
   <mailingLists>
