@@ -23,6 +23,8 @@ RHQ Agent Plugin Plugin
 
 * Planned
 
+  * Validation of plugins depending on other plugins (ie depending on the JMX plugin)
+
   * Agent Plugin project generation
 
   * Standalone Plugin Container setup for integration tests
