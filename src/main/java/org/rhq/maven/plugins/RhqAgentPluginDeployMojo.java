@@ -37,7 +37,7 @@ import org.codehaus.plexus.util.FileUtils;
  *
  * @author Thomas Segismont
  */
-@Mojo(name = "rhq-agent-plugin-deploy", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true)
+@Mojo(name = "deploy", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true)
 public class RhqAgentPluginDeployMojo extends AbstractMojo {
 
     /**

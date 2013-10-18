@@ -1,7 +1,7 @@
 Validating an RHQ Agent Plugin
 
  When a plugin is loaded by RHQ, it is first run through a plugin validation routine to ensure the integrity of the
- plugin. The <rhq-agent-plugin-validate> goal applies the same logic to your Agent Plugin build. The following checks
+ plugin. The <validate> goal applies the same logic to your Agent Plugin build. The following checks
  are made:
 
   * The plugin descriptor is validated against the descriptor schema.
@@ -26,7 +26,7 @@ Validating an RHQ Agent Plugin
     <execution>
         <id>validate-the-plugin</id>
         <goals>
-            <goal>rhq-agent-plugin-validate</goal>
+            <goal>validate</goal>
         </goals>
         <phase>package</phase>
         <configuration>

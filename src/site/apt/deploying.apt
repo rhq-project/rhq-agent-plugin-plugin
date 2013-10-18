@@ -1,7 +1,7 @@
 Deploying to a local RHQ server
 
  You will most probably install an RHQ Server and an Agent on your development box in order to test your Agent plugin.
- The <deploy-to-dev-container> goal will copy your freshly built plugin to your local server plugins directory.
+ The <deploy> goal will copy your freshly built plugin to your local server plugins directory.
 
 * Plugin Execution Sample
 
@@ -10,7 +10,7 @@ Deploying to a local RHQ server
     <execution>
         <id>deploy-to-dev-container</id>
         <goals>
-            <goal>rhq-agent-plugin-deploy</goal>
+            <goal>deploy</goal>
         </goals>
         <phase>package</phase>
         <configuration>

@@ -152,7 +152,7 @@ Sample POM
                     <execution>
                         <id>validate-the-plugin</id>
                         <goals>
-                            <goal>rhq-agent-plugin-validate</goal>
+                            <goal>validate</goal>
                         </goals>
                         <phase>package</phase>
                         <configuration>
@@ -162,7 +162,7 @@ Sample POM
                     <execution>
                         <id>deploy-to-dev-container</id>
                         <goals>
-                            <goal>rhq-agent-plugin-deploy</goal>
+                            <goal>deploy</goal>
                         </goals>
                         <phase>package</phase>
                         <configuration>
@@ -172,7 +172,7 @@ Sample POM
                     <execution>
                         <id>upload-to-rhq-server</id>
                         <goals>
-                            <goal>rhq-agent-plugin-upload</goal>
+                            <goal>upload</goal>
                         </goals>
                         <phase>package</phase>
                         <configuration>

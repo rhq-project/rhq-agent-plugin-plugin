@@ -118,7 +118,7 @@
           <execution>
             <phase>package</phase>
             <goals>
-              <goal>rhq-agent-plugin-validate</goal>
+              <goal>validate</goal>
             </goals>
             <configuration>
               <rhqVersion>${rhq.version}</rhqVersion>

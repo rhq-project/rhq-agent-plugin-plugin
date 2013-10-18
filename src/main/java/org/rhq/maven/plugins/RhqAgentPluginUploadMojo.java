@@ -56,7 +56,7 @@ import org.json.JSONObject;
  *
  * @author Thomas Segismont
  */
-@Mojo(name = "rhq-agent-plugin-upload", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true)
+@Mojo(name = "upload", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true)
 public class RhqAgentPluginUploadMojo extends AbstractMojo {
 
     private static final String REST_CONTENT_URI = "/rest/content";

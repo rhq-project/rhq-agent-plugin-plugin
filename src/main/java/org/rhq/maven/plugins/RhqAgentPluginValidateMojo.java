@@ -52,7 +52,7 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @author Thomas Segismont
  */
-@Mojo(name = "rhq-agent-plugin-validate", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true)
+@Mojo(name = "validate", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true)
 public class RhqAgentPluginValidateMojo extends AbstractMojo {
 
     private static final String PLUGIN_VALIDATOR_MODULE_GROUP_ID = "org.rhq";
