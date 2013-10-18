@@ -1,0 +1,37 @@
+Validating an RHQ Agent Plugin
+
+ When a plugin is loaded by RHQ, it is first run through a plugin validation routine to ensure the integrity of the
+ plugin. The <rhq-agent-plugin-validate> goal applies the same logic to your Agent Plugin build. The following checks
+ are made:
+
+  * The plugin descriptor is validated against the descriptor schema.
+
+  * For each resource type:
+
+    * The class specified for the component class is accessible.
+
+    * The component class implements the proper resource component interface (ResourceComponent).
+
+    * For each subsystem specified, the corresponding facet interface is implemented. For instance, if operations are
+    specified in the descriptor metadata, the component class is checked to ensure it implements the OperationFacet
+    interface.
+
+  * If a discovery class is specified, the validator ensures it is accessible and implements the resource discovery
+  interface (ResourceDiscoveryComponent).
+
+* Plugin Execution Sample
+
++---
+    ...
+    <execution>
+        <id>validate-the-plugin</id>
+        <goals>
+            <goal>rhq-agent-plugin-validate</goal>
+        </goals>
+        <phase>package</phase>
+        <configuration>
+            <rhqVersion>${rhq.version}</rhqVersion>
+        </configuration>
+    </execution>
+    ...
++---

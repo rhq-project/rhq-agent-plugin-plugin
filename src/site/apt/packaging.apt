@@ -1,0 +1,40 @@
+Packaging
+
+ Packaging is the core feature of the RHQ Agent Plugin Plugin.
+
+ Like the Maven War plugin, it determines the <<RUNTIME>> scope dependencies of your agent plugin and automatically adds
+ them under the </lib> directory of the archive.
+
+ The main project artifact will be the agent plugin archive.
+
+* Plugin Execution Sample
+
++---
+    ...
+    <plugin>
+        <groupId>org.rhq.maven.plugins</groupId>
+        <artifactId>rhq-agent-plugin-plugin</artifactId>
+        <version>${rhq-agent-plugin-plugin.version}</version>
+        <!-- Tell Maven that this plugin will extend the standard lifecycle and packaging -->
+        <!-- Without this the build fails to recognize the custom packaging -->
+        <extensions>true</extensions>
+        <configuration>
+            <!-- Here comes the project manifest customization  -->
+            <archive>
+                <manifest>
+                    <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                </manifest>
+                <manifestEntries>
+                    <Maven-Version>${maven.version}</Maven-Version>
+                    <Java-Version>${java.version}</Java-Version>
+                    <Java-Vendor>${java.vendor}</Java-Vendor>
+                    <Os-Name>${os.name}</Os-Name>
+                    <Os-Arch>${os.arch}</Os-Arch>
+                    <Os-Version>${os.version}</Os-Version>
+                </manifestEntries>
+            </archive>
+        </configuration>
+    </plugin>
+    ...
++---

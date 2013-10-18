@@ -11,20 +11,6 @@
 
   <name>RHQ Agent Plugin Plugin</name>
   <description>A Maven plugin to help building RHQ agent plugins.</description>
-  <inceptionYear>2013</inceptionYear>
-  <url>https://github.com/tsegismont/rhq-agent-plugin-plugin</url>
-
-  <organization>
-    <name>Red Hat, Inc.</name>
-    <url>http://www.redhat.com/</url>
-  </organization>
-
-  <licenses>
-    <license>
-      <name>lgpl_v2_1</name>
-      <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
-    </license>
-  </licenses>
 
   <scm>
     <connection>scm:git:git://github.com/tsegismont/rhq-agent-plugin-plugin.git</connection>
@@ -32,21 +18,6 @@
     <url>https://github.com/tsegismont/rhq-agent-plugin-plugin</url>
     <tag>HEAD</tag>
   </scm>
-
-  <issueManagement>
-    <system>GitHub Issues</system>
-    <url>https://github.com/tsegismont/rhq-agent-plugin-plugin/issues</url>
-  </issueManagement>
-
-  <mailingLists>
-    <mailingList>
-      <name>RHQ Developers List</name>
-      <subscribe>https://lists.fedorahosted.org/mailman/listinfo/rhq-devel</subscribe>
-      <unsubscribe>https://lists.fedorahosted.org/mailman/listinfo/rhq-devel</unsubscribe>
-      <post>rhq-devel@lists.fedorahosted.org</post>
-      <archive>https://lists.fedorahosted.org/pipermail/rhq-devel/</archive>
-    </mailingList>
-  </mailingLists>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -184,6 +155,38 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.4</version>
+        <configuration>
+          <preparationGoals>clean deploy site</preparationGoals>
+          <goals>deploy site com.github.github:site-maven-plugin:site</goals>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.3</version>
+        <configuration>
+          <skipDeploy>true</skipDeploy>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.7</version>
+      </plugin>
+
+      <plugin>
+        <groupId>com.github.github</groupId>
+        <artifactId>site-maven-plugin</artifactId>
+        <version>0.9</version>
+        <configuration>
+          <message>Publishing site to GitHub Pages</message>
+          <repositoryOwner>tsegismont</repositoryOwner>
+          <repositoryName>rhq-agent-plugin-plugin</repositoryName>
+          <server>github</server>
+          <noJekyll>true</noJekyll>
+        </configuration>
       </plugin>
 
     </plugins>
@@ -200,6 +203,9 @@
     </plugins>
   </reporting>
 
+  <inceptionYear>2013</inceptionYear>
+  <url>https://github.com/tsegismont/rhq-agent-plugin-plugin</url>
+
   <developers>
     <developer>
       <id>tsegismont</id>
@@ -207,6 +213,33 @@
       <timezone>+1</timezone>
     </developer>
   </developers>
+
+  <organization>
+    <name>Red Hat, Inc.</name>
+    <url>http://www.redhat.com/</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>lgpl_v2_1</name>
+      <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+    </license>
+  </licenses>
+
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>https://github.com/tsegismont/rhq-agent-plugin-plugin/issues</url>
+  </issueManagement>
+
+  <mailingLists>
+    <mailingList>
+      <name>RHQ Developers List</name>
+      <subscribe>https://lists.fedorahosted.org/mailman/listinfo/rhq-devel</subscribe>
+      <unsubscribe>https://lists.fedorahosted.org/mailman/listinfo/rhq-devel</unsubscribe>
+      <post>rhq-devel@lists.fedorahosted.org</post>
+      <archive>https://lists.fedorahosted.org/pipermail/rhq-devel/</archive>
+    </mailingList>
+  </mailingLists>
 
   <distributionManagement>
     <repository>

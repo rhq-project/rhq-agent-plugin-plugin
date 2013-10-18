@@ -1,0 +1,32 @@
+How to use the plugin?
+
+
+ Currently, this plugin is {{{https://bintray.com/repo/browse/tsegismont/rhq-maven-plugins}published on Bintray}}.
+
+ You must configure your Maven settings file to enable the Bintray repository:
+
++---
+<settings>
+ ...
+  <profiles>
+    ...
+    <profile>
+      <id>tsegismont-rhq-maven-plugins</id>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>tsegismont-rhq-maven-plugins</id>
+          <url>https://dl.bintray.com/content/tsegismont/rhq-maven-plugins</url>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+    ...
+  </profiles>
+  ...
+  <activeProfiles>
+    ...
+    <activeProfile>tsegismont-rhq-maven-plugins</activeProfile>
+    ...
+  </activeProfiles>
+ ...
+</settings>
++---

@@ -1,0 +1,40 @@
+RHQ Agent Plugin Plugin
+
+ Welcome to the RHQ Agent Plugin Plugin documentation.
+
+ <<Plugin Plugin?>>
+
+ Yes. Plugin Plugin: a Maven Plugin to help you build RHQ Agent Plugins.
+
+ <<Great. But I know nothing about RHQ Agent Plugings...>>
+
+ Then you'll want to read the {{{https://docs.jboss.org/author/display/RHQ/Plugins+-+Getting+Started}Getting Started with RHQ Agent Plugins}} wiki page first.
+ You can also checkout the {{{http://www.redhat.com/f/pdf/Write_A_Plugin_WP_web.pdf}How to write a plugin for JBoss ON and RHQ Guide}} (PDF).
+
+* Available features
+
+  * {{{./packaging.html}Packaging}}
+
+  * {{{./validating.html}Validation}}
+
+  * {{{./deploying.html}Deployment to a local RHQ Server (dev-container)}}
+
+  * {{{./uploading.html}Upload to to a remote RHQ Server}}
+
+* Planned
+
+  * Agent Plugin project generation
+
+  * Standalone Plugin Container setup for integration tests
+
+  * RHQ CLI script execution
+
+  * Plugin Documentation generation
+
+* Need help ?
+
+  * Post a message on the {{{https://community.jboss.org/en/rhq?view=discussions}RHQ Project Forum}}
+
+  * Send a message to the {{{https://lists.fedorahosted.org/mailman/listinfo/rhq-users}RHQ Users List}}
+
+  * Join us on IRC in <#rhq> room @ freenode

@@ -1,0 +1,34 @@
+Uploading to a remote RHQ server
+
+ The <rhq-agent-plugin-upload> goal can be used when you need to push your freshly built plugin to a remote RHQ Server
+ (integration tests, acceptance tests or production server).
+
+ By default, after the plugin is uploaded, it will trigger a plugin scan on the server. This can be configured with the
+ <startScan> attribute.
+
+* Plugin Execution Sample
+
++---
+    ...
+    <execution>
+        <id>upload-to-rhq-server</id>
+        <goals>
+            <goal>rhq-agent-plugin-upload</goal>
+        </goals>
+        <phase>package</phase>
+        <configuration>
+            <!-- Optional, defaults to http -->
+            <scheme>http</scheme>
+            <host>rhqserver.mycorp.int</host>
+            <port>7080</port> <!-- Optional, defaults to 7080 -->
+            <!-- The user must have appropriate permissions (MANAGE_SETTINGS) -->
+            <username>rhqadmin</username>
+            <password>secret</password>
+            <!-- Whether a plugin scan should be triggered on the server after upload. Optional, defaults to true -->
+            <startScan>true</startScan>
+            <!-- Whether to fail the build if an error occurs while uploading. Optional, defaults to false -->
+            <failOnError>false</failOnError>
+        </configuration>
+    </execution>
+    ...
++---
