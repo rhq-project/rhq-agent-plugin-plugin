@@ -156,7 +156,7 @@
         <artifactId>maven-release-plugin</artifactId>
         <version>2.4</version>
         <configuration>
-          <preparationGoals>clean deploy site</preparationGoals>
+          <preparationGoals>clean verify site</preparationGoals>
           <goals>deploy site com.github.github:site-maven-plugin:site</goals>
         </configuration>
       </plugin>
