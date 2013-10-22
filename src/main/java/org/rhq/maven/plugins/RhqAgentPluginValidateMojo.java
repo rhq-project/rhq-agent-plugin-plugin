@@ -23,8 +23,9 @@ package org.rhq.maven.plugins;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ProcessBuilder.Redirect;
+import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -123,12 +124,11 @@ public class RhqAgentPluginValidateMojo extends AbstractMojo {
                         pluginValidatorClasspath, //
                         "-Dlog4j.configuration=" + VALIDATOR_LOG4J_PROPERTIES, //
                         PLUGIN_VALIDATOR_MAIN_CLASS, //
-                        agentPluginArchive.getAbsolutePath()) // Plugin validator takes plugin file path as argument
-                .redirectOutput(Redirect.INHERIT) //
-                .redirectError(Redirect.INHERIT);
+                        agentPluginArchive.getAbsolutePath()); // Plugin validator takes plugin file path as argument
         Process process = null;
         try {
             process = processBuilder.start();
+            redirectOuput(process);
             int exitCode = process.waitFor();
             if (exitCode != 0) {
                 handleFailure("Invalid plugin");
@@ -140,6 +140,25 @@ public class RhqAgentPluginValidateMojo extends AbstractMojo {
                 process.destroy();
             }
         }
+    }
+
+    private void redirectOuput(Process process) {
+        startCopyThread(process.getInputStream(), System.out);
+        startCopyThread(process.getErrorStream(), System.err);
+    }
+
+    private void startCopyThread(final InputStream inputStream, final PrintStream printStream) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    IOUtil.copy(inputStream, printStream);
+                } catch (IOException ignore) {
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
     private String buildPluginValidatorClasspath() throws MojoExecutionException {
