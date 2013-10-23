@@ -265,9 +265,15 @@
   </mailingLists>
 
   <distributionManagement>
+    <snapshotRepository>
+      <id>jboss-snapshots-repository</id>
+      <name>JBoss Snapshots Repository</name>
+      <url>https://repository.jboss.org/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
     <repository>
-      <id>bintray-tsegismont-rhq-agent-plugin-plugin</id>
-      <url>https://api.bintray.com/maven/tsegismont/rhq-maven-plugins/rhq-agent-plugin-plugin</url>
+      <id>jboss-releases-repository</id>
+      <name>JBoss Releases Repository</name>
+      <url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
 
