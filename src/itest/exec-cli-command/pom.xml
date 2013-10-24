@@ -24,8 +24,8 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>itest-invalid-plugin</groupId>
-  <artifactId>itest-invalid-plugin</artifactId>
+  <groupId>itest-valid-plugin</groupId>
+  <artifactId>itest-valid-plugin</artifactId>
   <version>1.0-SNAPSHOT</version>
   <!-- This project has the custom plugin packaging -->
   <packaging>rhq-agent-plugin</packaging>
@@ -36,40 +36,6 @@
     <rhq.version>4.9.0</rhq.version>
   </properties>
 
-  <dependencies>
-
-    <!-- Dependencies provided by the plugin container -->
-
-    <dependency>
-      <groupId>org.rhq</groupId>
-      <artifactId>rhq-core-domain</artifactId>
-      <version>${rhq.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.rhq</groupId>
-      <artifactId>rhq-core-plugin-api</artifactId>
-      <version>${rhq.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.rhq</groupId>
-      <artifactId>rhq-core-native-system</artifactId>
-      <version>${rhq.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.1.1</version>
-      <scope>provided</scope>
-    </dependency>
-
-  </dependencies>
-
   <build>
 
     <plugins>
@@ -79,22 +45,16 @@
         <artifactId>@project.artifactId@</artifactId>
         <version>@project.version@</version>
         <extensions>true</extensions>
-        <configuration>
-          <archive>
-            <manifest>
-              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-          </archive>
-        </configuration>
         <executions>
           <execution>
+            <id>exec-cli-command</id>
             <phase>package</phase>
             <goals>
-              <goal>validate</goal>
+              <goal>exec-cli-command</goal>
             </goals>
             <configuration>
               <rhqVersion>${rhq.version}</rhqVersion>
+              <command>scriptUtil.saveBytesToFile(new java.lang.String("Hello Maven Invoker!").getBytes(), "${project.build.directory}/cli-command.out")</command>
             </configuration>
           </execution>
         </executions>

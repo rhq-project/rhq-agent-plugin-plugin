@@ -52,6 +52,7 @@
       <item name="Validating" href="validating.html" />
       <item name="Deploying to a local RHQ server" href="deploying.html" />
       <item name="Uploading to a remote RHQ server" href="uploading.html" />
+      <item name="Executing a CLI script or command" href="executing-cli.html" />
     </menu>
 
     <menu name="Reference">

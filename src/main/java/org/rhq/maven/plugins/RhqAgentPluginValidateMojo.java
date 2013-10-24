@@ -209,7 +209,7 @@ public class RhqAgentPluginValidateMojo extends AbstractMojo {
             IOUtil.close(outputStream);
         }
 
-        return StringUtils.join(classpathElements.iterator(), System.getProperty("path.separator"));
+        return StringUtils.join(classpathElements.iterator(), File.pathSeparator);
     }
 
     private void handleFailure(String message) throws MojoFailureException {

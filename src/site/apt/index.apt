@@ -21,6 +21,8 @@ RHQ Agent Plugin Plugin
 
   * {{{./uploading.html}Upload to to a remote RHQ Server}}
 
+  * {{{./executing-cli.html}CLI script or command execution}}
+
 * Planned
 
   * Validation of plugins depending on other plugins (ie depending on the JMX plugin)
@@ -28,8 +30,6 @@ RHQ Agent Plugin Plugin
   * Agent Plugin project generation
 
   * Standalone Plugin Container setup for integration tests
-
-  * RHQ CLI script execution
 
   * Plugin Documentation generation
 

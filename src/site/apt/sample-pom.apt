@@ -189,6 +189,32 @@ Sample POM
                             <failOnError>false</failOnError>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>exec-cli-script</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec-cli-script</goal>
+                        </goals>
+                        <configuration>
+                            <rhqVersion>${rhq.version}</rhqVersion>
+                            <scriptFile>${basedir}/src/cli-scripts/sample.js</scriptFile>
+                            <args>
+                                <arg>Maven Invoker</arg>
+                                <arg>${project.build.directory}/sample.js.out</arg>
+                            </args>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>exec-cli-command</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec-cli-command</goal>
+                        </goals>
+                        <configuration>
+                            <rhqVersion>${rhq.version}</rhqVersion>
+                            <command>scriptUtil.saveBytesToFile(new java.lang.String("Hello!").getBytes(), "${project.build.directory}/cli-command.out")</command>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
