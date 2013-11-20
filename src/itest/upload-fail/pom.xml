@@ -24,8 +24,8 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>exec-cli-command</groupId>
-  <artifactId>exec-cli-command</artifactId>
+  <groupId>upload-fail</groupId>
+  <artifactId>upload-fail</artifactId>
   <version>1.0-SNAPSHOT</version>
   <!-- This project has the custom plugin packaging -->
   <packaging>rhq-agent-plugin</packaging>
@@ -33,7 +33,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <rhq.version>4.9.0</rhq.version>
   </properties>
 
   <build>
@@ -47,14 +46,14 @@
         <extensions>true</extensions>
         <executions>
           <execution>
-            <id>exec-cli-command</id>
-            <phase>package</phase>
+            <id>upload</id>
             <goals>
-              <goal>exec-cli-command</goal>
+              <goal>upload</goal>
             </goals>
             <configuration>
-              <rhqVersion>${rhq.version}</rhqVersion>
-              <command>scriptUtil.saveBytesToFile(new java.lang.String("Hello Maven Invoker!").getBytes(), "${project.build.directory}/cli-command.out")</command>
+              <host>i-do-not-exist</host>
+              <username>me</username>
+              <password>secret</password>
             </configuration>
           </execution>
         </executions>

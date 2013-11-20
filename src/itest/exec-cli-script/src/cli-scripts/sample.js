@@ -1,4 +1,3 @@
-
 /*
  * RHQ Management Platform
  * Copyright 2013, Red Hat Middleware LLC, and individual contributors

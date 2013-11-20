@@ -24,8 +24,8 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>itest-valid-plugin</groupId>
-  <artifactId>itest-valid-plugin</artifactId>
+  <groupId>exec-cli-script</groupId>
+  <artifactId>exec-cli-script</artifactId>
   <version>1.0-SNAPSHOT</version>
   <!-- This project has the custom plugin packaging -->
   <packaging>rhq-agent-plugin</packaging>

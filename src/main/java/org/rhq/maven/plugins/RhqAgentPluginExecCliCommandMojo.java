@@ -50,7 +50,7 @@ public class RhqAgentPluginExecCliCommandMojo extends AbstractExecCliMojo {
     @Override
     protected void validateParams() throws MojoExecutionException, MojoFailureException {
         if (StringUtils.isBlank(command)) {
-            handleProblem("command is blank");
+            throw new MojoExecutionException("'command' param is blank");
         }
     }
 
@@ -62,7 +62,7 @@ public class RhqAgentPluginExecCliCommandMojo extends AbstractExecCliMojo {
             // Run the CLI in forked process
             ProcessBuilder processBuilder = new ProcessBuilder() //
                     .directory(rhqCliStartScriptFile.getParentFile()) // bin directory
-                    .command(getRhqCliCommand(rhqCliStartScriptFile));
+                    .command(buildRhqCliCommand(rhqCliStartScriptFile));
             getLog().info("Executing RHQ CLI command: " + IOUtils.LINE_SEPARATOR + command);
             process = processBuilder.start();
             redirectOuput(process);
@@ -79,7 +79,7 @@ public class RhqAgentPluginExecCliCommandMojo extends AbstractExecCliMojo {
         }
     }
 
-    private List<String> getRhqCliCommand(File rhqCliStartScriptFile) {
+    private List<String> buildRhqCliCommand(File rhqCliStartScriptFile) {
         List<String> commandParts = new LinkedList<String>();
         commandParts.add(rhqCliStartScriptFile.getAbsolutePath());
         if (login) {
@@ -93,13 +93,10 @@ public class RhqAgentPluginExecCliCommandMojo extends AbstractExecCliMojo {
             commandParts.add(String.valueOf(port));
         }
         commandParts.add("-c");
-        if (getLog().isDebugEnabled()) {
-            getLog().debug("RHQ CLI command = " + StringUtils.join(commandParts.iterator(), " "));
-        }
-        if (getLog().isDebugEnabled()) {
-            getLog().debug("RHQ CLI command to execute = " + command);
-        }
         commandParts.add(command);
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("Built command to execute = " + StringUtils.join(commandParts.iterator(), " "));
+        }
         return commandParts;
     }
 }

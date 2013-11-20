@@ -24,8 +24,8 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>valid-plugin</groupId>
-  <artifactId>valid-plugin</artifactId>
+  <groupId>invalid-plugin-nofail</groupId>
+  <artifactId>invalid-plugin-nofail</artifactId>
   <version>1.0-SNAPSHOT</version>
   <!-- This project has the custom plugin packaging -->
   <packaging>rhq-agent-plugin</packaging>
@@ -68,54 +68,6 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Dependencies required by your plugin -->
-    <!-- All dependencies under RUNTIME scope will be included in the plugin archive -->
-
-    <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-      <version>3.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-codec</groupId>
-          <artifactId>commons-codec</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.3</version>
-    </dependency>
-
-    <!-- Some test dependencies -->
-
-    <dependency>
-      <groupId>org.rhq</groupId>
-      <artifactId>rhq-core-plugin-container</artifactId>
-      <version>${rhq.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.rhq</groupId>
-      <artifactId>test-utils</artifactId>
-      <version>${rhq.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.rhq</groupId>
-      <artifactId>rhq-core-plugin-container</artifactId>
-      <version>${rhq.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -143,6 +95,7 @@
             </goals>
             <configuration>
               <rhqVersion>${rhq.version}</rhqVersion>
+              <failOnError>false</failOnError>
             </configuration>
           </execution>
         </executions>

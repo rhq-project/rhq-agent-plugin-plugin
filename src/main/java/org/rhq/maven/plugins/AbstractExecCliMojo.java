@@ -128,13 +128,13 @@ public abstract class AbstractExecCliMojo extends AbstractMojo {
     private void validateCommonParams() throws MojoExecutionException {
         if (login) {
             if (StringUtils.isBlank(host)) {
-                throw new MojoExecutionException("host is blank");
+                throw new MojoExecutionException("'host' param is blank");
             }
             if (StringUtils.isBlank(username)) {
-                throw new MojoExecutionException("username is blank");
+                throw new MojoExecutionException("'username' param is blank");
             }
             if (StringUtils.isBlank(password)) {
-                throw new MojoExecutionException("password is blank");
+                throw new MojoExecutionException("'password' param is blank");
             }
         }
     }
@@ -152,7 +152,7 @@ public abstract class AbstractExecCliMojo extends AbstractMojo {
                 getLog().debug("Installed RHQ CLI");
             }
         } catch (Exception e) {
-            handleException(e);
+            throw new MojoExecutionException(e.getMessage(), e);
         }
     }
 

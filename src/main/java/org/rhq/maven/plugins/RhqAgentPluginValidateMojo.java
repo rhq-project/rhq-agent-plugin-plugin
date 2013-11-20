@@ -31,10 +31,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
@@ -108,25 +111,17 @@ public class RhqAgentPluginValidateMojo extends AbstractMojo {
     }
 
     private void validate(File agentPluginArchive) throws MojoExecutionException {
-        // Run the plugin validator in forked process
-        String pluginValidatorClasspath = buildPluginValidatorClasspath();
-        String javaHome = System.getProperty("java.home");
-        String javaCommand = javaHome + File.separator + "bin" + File.separator + "java";
-        if (getLog().isDebugEnabled()) {
-            getLog().debug("pluginValidatorClasspath = " + pluginValidatorClasspath);
-            getLog().debug("javaHome = " + javaHome);
-            getLog().debug("javaCommand = " + javaCommand);
-        }
-        ProcessBuilder processBuilder = new ProcessBuilder() //
-                .directory(buildDirectory) //
-                .command(javaCommand, //
-                        "-classpath", //
-                        pluginValidatorClasspath, //
-                        "-Dlog4j.configuration=" + VALIDATOR_LOG4J_PROPERTIES, //
-                        PLUGIN_VALIDATOR_MAIN_CLASS, //
-                        agentPluginArchive.getAbsolutePath()); // Plugin validator takes plugin file path as argument
+        // Run the plugin validator as a forked process
         Process process = null;
         try {
+            String pluginValidatorClasspath = buildPluginValidatorClasspath();
+            String javaCommand = buildJavaCommand(pluginValidatorClasspath);
+            if (getLog().isDebugEnabled()) {
+                getLog().debug(IOUtils.LINE_SEPARATOR + "pluginValidatorClasspath = " + pluginValidatorClasspath +
+                        IOUtils.LINE_SEPARATOR + IOUtils.LINE_SEPARATOR + "javaCommand = " + javaCommand);
+            }
+            ProcessBuilder processBuilder = buildProcessBuilder(agentPluginArchive, pluginValidatorClasspath,
+                    javaCommand);
             process = processBuilder.start();
             redirectOuput(process);
             int exitCode = process.waitFor();
@@ -142,26 +137,8 @@ public class RhqAgentPluginValidateMojo extends AbstractMojo {
         }
     }
 
-    private void redirectOuput(Process process) {
-        startCopyThread(process.getInputStream(), System.out);
-        startCopyThread(process.getErrorStream(), System.err);
-    }
-
-    private void startCopyThread(final InputStream inputStream, final PrintStream printStream) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    IOUtil.copy(inputStream, printStream);
-                } catch (IOException ignore) {
-                }
-            }
-        });
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    private String buildPluginValidatorClasspath() throws MojoExecutionException {
+    private String buildPluginValidatorClasspath() throws ArtifactNotFoundException, ArtifactResolutionException,
+            IOException {
         // Resolve dependencies of the plugin validator module
         Artifact dummyOriginatingArtifact =
                 artifactFactory.createBuildArtifact("org.apache.maven.plugins", "maven-downloader-plugin", "1.0",
@@ -169,14 +146,9 @@ public class RhqAgentPluginValidateMojo extends AbstractMojo {
         Artifact pluginContainerArtifact = this.artifactFactory.createArtifact(
                 PLUGIN_VALIDATOR_MODULE_GROUP_ID, PLUGIN_VALIDATOR_MODULE_ARTIFACT_ID, rhqVersion,
                 null, "jar");
-        ArtifactResolutionResult artifactResolutionResult = null;
-        try {
-            artifactResolutionResult = artifactResolver.resolveTransitively(Collections
-                    .singleton(pluginContainerArtifact), dummyOriginatingArtifact, localRepository,
-                    remoteRepositories, artifactMetadataSource, null);
-        } catch (Exception e) {
-            handleException(e);
-        }
+        ArtifactResolutionResult artifactResolutionResult = artifactResolver.resolveTransitively(Collections
+                .singleton(pluginContainerArtifact), dummyOriginatingArtifact, localRepository,
+                remoteRepositories, artifactMetadataSource, null);
 
         List<String> classpathElements = new LinkedList<String>();
 
@@ -202,14 +174,48 @@ public class RhqAgentPluginValidateMojo extends AbstractMojo {
         try {
             outputStream = new FileOutputStream(log4jFile);
             IOUtil.copy(inputStream, outputStream);
-        } catch (Exception e) {
-            handleException(e);
         } finally {
             IOUtil.close(inputStream);
             IOUtil.close(outputStream);
         }
 
         return StringUtils.join(classpathElements.iterator(), File.pathSeparator);
+    }
+
+    private String buildJavaCommand(String pluginValidatorClasspath) {
+        String javaHome = System.getProperty("java.home");
+        return javaHome + File.separator + "bin" + File.separator + "java";
+    }
+
+    private ProcessBuilder buildProcessBuilder(File agentPluginArchive, String pluginValidatorClasspath,
+                                               String javaCommand) {
+        return new ProcessBuilder() //
+                .directory(buildDirectory) //
+                .command(javaCommand, //
+                        "-classpath", //
+                        pluginValidatorClasspath, //
+                        "-Dlog4j.configuration=" + VALIDATOR_LOG4J_PROPERTIES, //
+                        PLUGIN_VALIDATOR_MAIN_CLASS, //
+                        agentPluginArchive.getAbsolutePath());
+    }
+
+    private void redirectOuput(Process process) {
+        startCopyThread(process.getInputStream(), System.out);
+        startCopyThread(process.getErrorStream(), System.err);
+    }
+
+    private void startCopyThread(final InputStream inputStream, final PrintStream printStream) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    IOUtil.copy(inputStream, printStream);
+                } catch (IOException ignore) {
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
     private void handleFailure(String message) throws MojoFailureException {

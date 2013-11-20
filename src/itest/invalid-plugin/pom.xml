@@ -24,8 +24,8 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>itest-invalid-plugin</groupId>
-  <artifactId>itest-invalid-plugin</artifactId>
+  <groupId>invalid-plugin</groupId>
+  <artifactId>invalid-plugin</artifactId>
   <version>1.0-SNAPSHOT</version>
   <!-- This project has the custom plugin packaging -->
   <packaging>rhq-agent-plugin</packaging>

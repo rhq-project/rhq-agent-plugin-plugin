@@ -19,14 +19,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
-
-
-
 def sampleJsOutput = new File(basedir, "target/cli-command.out")
-assert sampleJsOutput.isFile() : sampleJsOutput + " is not a file"
+assert sampleJsOutput.isFile(): sampleJsOutput + " is not a file"
 
 def content = new File(basedir, "target/cli-command.out").text
 assert content.contains("Hello Maven Invoker!")
-
-

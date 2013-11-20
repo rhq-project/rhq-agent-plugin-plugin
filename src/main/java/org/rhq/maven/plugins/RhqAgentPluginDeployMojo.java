@@ -58,25 +58,58 @@ public class RhqAgentPluginDeployMojo extends AbstractMojo {
     @Parameter(required = true)
     private File deployDirectory;
 
+    /**
+     * Whether to fail the build if an error occurs while uploading.
+     */
+    @Parameter(defaultValue = "true")
+    private boolean failOnError;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         File agentPluginArchive = RhqAgentPluginMojo.getAgentPluginArchiveFile(buildDirectory, finalName);
         if (!agentPluginArchive.exists() && agentPluginArchive.isFile()) {
             throw new MojoExecutionException("Agent plugin archive does not exist: " + agentPluginArchive);
         }
-        if (deployDirectory == null || !deployDirectory.exists() || !deployDirectory.isDirectory()) {
-            throw new MojoExecutionException("Invalid deploy directory: " + String.valueOf(deployDirectory));
+        if (!deployDirectory.isDirectory()) {
+            if (failOnError) {
+                throw new MojoExecutionException(getInvalidDeployDirMessage());
+            } else {
+                getLog().error(getInvalidDeployDirMessage());
+                return;
+            }
         }
         if (!deployDirectory.canWrite()) {
-            throw new MojoExecutionException("No permission to write to " + deployDirectory);
+            if (failOnError) {
+                throw new MojoExecutionException(getDeployDirIsNotWritableMessage());
+            } else {
+                getLog().error(getDeployDirIsNotWritableMessage());
+                return;
+            }
         }
         try {
             // Copy plugin archive to the plugins directory of a local RHQ server
             FileUtils.copyFileToDirectory(agentPluginArchive, deployDirectory);
             getLog().info("Copied " + agentPluginArchive + " to " + deployDirectory);
         } catch (IOException e) {
-            throw new MojoExecutionException("Failed to copy " + agentPluginArchive + " to " + deployDirectory);
+            if (failOnError) {
+                throw new MojoExecutionException(getCopyFailureMessage(agentPluginArchive));
+            } else {
+                getLog().error(getCopyFailureMessage(agentPluginArchive));
+                return;
+            }
         }
+    }
+
+    private String getInvalidDeployDirMessage() {
+        return deployDirectory + " is not a directory";
+    }
+
+    private String getDeployDirIsNotWritableMessage() {
+        return "Cannot write to " + deployDirectory;
+    }
+
+    private String getCopyFailureMessage(File agentPluginArchive) {
+        return "Failed to copy " + agentPluginArchive + " to " + deployDirectory;
     }
 
 }

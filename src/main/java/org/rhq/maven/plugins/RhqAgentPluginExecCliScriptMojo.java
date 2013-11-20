@@ -43,7 +43,6 @@ import org.codehaus.plexus.util.StringUtils;
 public class RhqAgentPluginExecCliScriptMojo extends AbstractExecCliMojo {
 
     private static final List<String> VALID_ARGS_STYLES = Arrays.asList("indexed", "named");
-    private static final String INVALID_ARGS_STYLE_CONFIGURATION = "Invalid argsStyle configuration";
 
     /**
      * The script file to execute.
@@ -66,10 +65,10 @@ public class RhqAgentPluginExecCliScriptMojo extends AbstractExecCliMojo {
     @Override
     protected void validateParams() throws MojoExecutionException, MojoFailureException {
         if (!scriptFile.isFile()) {
-            handleProblem(scriptFile + " does not exist");
+            throw new MojoExecutionException(scriptFile + " does not exist");
         }
         if (!VALID_ARGS_STYLES.contains(argsStyle)) {
-            handleProblem(INVALID_ARGS_STYLE_CONFIGURATION + ": " + argsStyle);
+            throw new MojoExecutionException("Invalid argsStyle configuration: " + argsStyle);
         }
     }
 
@@ -81,7 +80,7 @@ public class RhqAgentPluginExecCliScriptMojo extends AbstractExecCliMojo {
             // Run the CLI in forked process
             ProcessBuilder processBuilder = new ProcessBuilder() //
                     .directory(rhqCliStartScriptFile.getParentFile()) // bin directory
-                    .command(getRhqCliCommand(rhqCliStartScriptFile));
+                    .command(buildRhqCliCommand(rhqCliStartScriptFile));
             getLog().info("Executing RHQ CLI script file: " + IOUtils.LINE_SEPARATOR + scriptFile.getAbsolutePath());
             process = processBuilder.start();
             redirectOuput(process);
@@ -98,32 +97,29 @@ public class RhqAgentPluginExecCliScriptMojo extends AbstractExecCliMojo {
         }
     }
 
-    private List<String> getRhqCliCommand(File rhqCliStartScriptFile) {
-        List<String> command = new LinkedList<String>();
-        command.add(rhqCliStartScriptFile.getAbsolutePath());
+    private List<String> buildRhqCliCommand(File rhqCliStartScriptFile) {
+        List<String> commandParts = new LinkedList<String>();
+        commandParts.add(rhqCliStartScriptFile.getAbsolutePath());
         if (login) {
-            command.add("-u");
-            command.add(username);
-            command.add("-p");
-            command.add(password);
-            command.add("-s");
-            command.add(host);
-            command.add("-t");
-            command.add(String.valueOf(port));
+            commandParts.add("-u");
+            commandParts.add(username);
+            commandParts.add("-p");
+            commandParts.add(password);
+            commandParts.add("-s");
+            commandParts.add(host);
+            commandParts.add("-t");
+            commandParts.add(String.valueOf(port));
         }
-        command.add("--args-style");
-        command.add(argsStyle);
-        command.add("-f");
-        command.add(scriptFile.getAbsolutePath());
-        if (getLog().isDebugEnabled()) {
-            getLog().debug("RHQ CLI command = " + StringUtils.join(command.iterator(), " "));
-        }
+        commandParts.add("--args-style");
+        commandParts.add(argsStyle);
+        commandParts.add("-f");
+        commandParts.add(scriptFile.getAbsolutePath());
         if (args != null && !args.isEmpty()) {
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("RHQ CLI args = " + args);
-            }
-            command.addAll(args);
+            commandParts.addAll(args);
         }
-        return command;
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("Built command to execute = " + StringUtils.join(commandParts.iterator(), " "));
+        }
+        return commandParts;
     }
 }
