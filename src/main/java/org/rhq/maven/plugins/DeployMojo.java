@@ -38,7 +38,7 @@ import org.codehaus.plexus.util.FileUtils;
  * @author Thomas Segismont
  */
 @Mojo(name = "deploy", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true)
-public class RhqAgentPluginDeployMojo extends AbstractMojo {
+public class DeployMojo extends AbstractMojo {
 
     /**
      * The build directory (root of build works)
@@ -66,7 +66,7 @@ public class RhqAgentPluginDeployMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        File agentPluginArchive = RhqAgentPluginMojo.getAgentPluginArchiveFile(buildDirectory, finalName);
+        File agentPluginArchive = PackageMojo.getAgentPluginArchiveFile(buildDirectory, finalName);
         if (!agentPluginArchive.exists() && agentPluginArchive.isFile()) {
             throw new MojoExecutionException("Agent plugin archive does not exist: " + agentPluginArchive);
         }

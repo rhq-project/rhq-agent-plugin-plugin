@@ -57,7 +57,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author Thomas Segismont
  */
 @Mojo(name = "validate", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true)
-public class RhqAgentPluginValidateMojo extends AbstractMojo {
+public class ValidateMojo extends AbstractMojo {
 
     private static final String PLUGIN_VALIDATOR_MODULE_GROUP_ID = "org.rhq";
     private static final String PLUGIN_VALIDATOR_MODULE_ARTIFACT_ID = "rhq-core-plugin-container";
@@ -103,7 +103,7 @@ public class RhqAgentPluginValidateMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        File agentPluginArchive = RhqAgentPluginMojo.getAgentPluginArchiveFile(buildDirectory, finalName);
+        File agentPluginArchive = PackageMojo.getAgentPluginArchiveFile(buildDirectory, finalName);
         if (!agentPluginArchive.exists() && agentPluginArchive.isFile()) {
             throw new MojoExecutionException("Agent plugin archive does not exist: " + agentPluginArchive);
         }

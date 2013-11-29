@@ -22,6 +22,7 @@
 package org.rhq.maven.plugins;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,23 +35,40 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Execute a CLI command.
+ * Execute a CLI script.
  *
  * @author Thomas Segismont
  */
-@Mojo(name = "exec-cli-command", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true)
-public class RhqAgentPluginExecCliCommandMojo extends AbstractExecCliMojo {
+@Mojo(name = "exec-cli-script", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true)
+public class ExecCliScriptMojo extends AbstractExecCliMojo {
+
+    private static final List<String> VALID_ARGS_STYLES = Arrays.asList("indexed", "named");
 
     /**
-     * The command to execute.
+     * The script file to execute.
      */
     @Parameter(required = true)
-    private String command;
+    private File scriptFile;
+
+    /**
+     * List of CLI arguments.
+     */
+    @Parameter(required = false)
+    private List<String> args;
+
+    /**
+     * Indicates the style or format of arguments passed to the script.
+     */
+    @Parameter(defaultValue = "indexed")
+    private String argsStyle;
 
     @Override
     protected void validateParams() throws MojoExecutionException, MojoFailureException {
-        if (StringUtils.isBlank(command)) {
-            throw new MojoExecutionException("'command' param is blank");
+        if (!scriptFile.isFile()) {
+            throw new MojoExecutionException(scriptFile + " does not exist");
+        }
+        if (!VALID_ARGS_STYLES.contains(argsStyle)) {
+            throw new MojoExecutionException("Invalid argsStyle configuration: " + argsStyle);
         }
     }
 
@@ -63,7 +81,7 @@ public class RhqAgentPluginExecCliCommandMojo extends AbstractExecCliMojo {
             ProcessBuilder processBuilder = new ProcessBuilder() //
                     .directory(rhqCliStartScriptFile.getParentFile()) // bin directory
                     .command(buildRhqCliCommand(rhqCliStartScriptFile));
-            getLog().info("Executing RHQ CLI command: " + IOUtils.LINE_SEPARATOR + command);
+            getLog().info("Executing RHQ CLI script file: " + IOUtils.LINE_SEPARATOR + scriptFile.getAbsolutePath());
             process = processBuilder.start();
             redirectOuput(process);
             int exitCode = process.waitFor();
@@ -92,8 +110,13 @@ public class RhqAgentPluginExecCliCommandMojo extends AbstractExecCliMojo {
             commandParts.add("-t");
             commandParts.add(String.valueOf(port));
         }
-        commandParts.add("-c");
-        commandParts.add(command);
+        commandParts.add("--args-style");
+        commandParts.add(argsStyle);
+        commandParts.add("-f");
+        commandParts.add(scriptFile.getAbsolutePath());
+        if (args != null && !args.isEmpty()) {
+            commandParts.addAll(args);
+        }
         if (getLog().isDebugEnabled()) {
             getLog().debug("Built command to execute = " + StringUtils.join(commandParts.iterator(), " "));
         }

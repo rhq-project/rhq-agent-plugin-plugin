@@ -57,7 +57,7 @@ import org.json.JSONObject;
  * @author Thomas Segismont
  */
 @Mojo(name = "upload", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true)
-public class RhqAgentPluginUploadMojo extends AbstractMojo {
+public class UploadMojo extends AbstractMojo {
 
     private static final String REST_CONTENT_URI = "/rest/content";
     private static final String UPLOAD_URI = REST_CONTENT_URI + "/fresh";
@@ -121,7 +121,7 @@ public class RhqAgentPluginUploadMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        File agentPluginArchive = RhqAgentPluginMojo.getAgentPluginArchiveFile(buildDirectory, finalName);
+        File agentPluginArchive = PackageMojo.getAgentPluginArchiveFile(buildDirectory, finalName);
         if (!agentPluginArchive.exists() && agentPluginArchive.isFile()) {
             throw new MojoExecutionException("Agent plugin archive does not exist: " + agentPluginArchive);
         }
@@ -213,7 +213,7 @@ public class RhqAgentPluginUploadMojo extends AbstractMojo {
                 .setPort(port) //
                 .setPath(REST_CONTENT_URI + "/" + contentHandle + "/plugins") //
                 .setParameter("name", //
-                        RhqAgentPluginMojo.getAgentPluginArchiveFile(buildDirectory, finalName).getName()) //
+                        PackageMojo.getAgentPluginArchiveFile(buildDirectory, finalName).getName()) //
                 .setParameter("startScan", String.valueOf(startScan)) //
                 .build();
     }

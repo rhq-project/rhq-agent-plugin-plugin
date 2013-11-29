@@ -48,9 +48,9 @@ import org.codehaus.plexus.util.FileUtils;
  *
  * @author Thomas Segismont
  */
-@Mojo(name = "rhq-agent-plugin", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution =
+@Mojo(name = "package", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution =
         ResolutionScope.RUNTIME, threadSafe = true)
-public class RhqAgentPluginMojo extends AbstractMojo {
+public class PackageMojo extends AbstractMojo {
 
     /**
      * The build directory (root of build works)
