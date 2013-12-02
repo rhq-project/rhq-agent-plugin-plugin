@@ -129,6 +129,7 @@ public class SetupTestPluginContainerMojo extends AbstractMojo {
     private void createItestDirectory() throws MojoExecutionException {
         try {
             FileUtils.forceMkdir(itestDirectory);
+            getLog().info("Created itest directory: " + itestDirectory.getAbsolutePath());
         } catch (IOException e) {
             throw new MojoExecutionException("Could not create" + itestDirectory.getAbsolutePath(), e);
         }
@@ -177,6 +178,7 @@ public class SetupTestPluginContainerMojo extends AbstractMojo {
             throws MojoExecutionException {
         for (File requiredPlugin : requiredPlugins) {
             try {
+                getLog().info("Copying " + requiredPlugin.getAbsolutePath() + " to " + pluginsDirectory);
                 FileUtils.copyFileToDirectory(requiredPlugin, pluginsDirectory);
                 break;
             } catch (Exception e) {
