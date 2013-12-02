@@ -215,6 +215,45 @@ Sample POM
                             <command>scriptUtil.saveBytesToFile(new java.lang.String("Hello!").getBytes(), "${project.build.directory}/cli-command.out")</command>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>setup-test-plugin-container</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>setup-test-plugin-container</goal>
+                        </goals>
+                        <configuration>
+                            <rhqVersion>${rhq.version}</rhqVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>itest/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>itest/**</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <argLine>-Dorg.hyperic.sigar.path=${project.build.directory}/itest/lib</argLine>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 

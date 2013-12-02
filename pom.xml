@@ -200,7 +200,7 @@
           <cloneProjectsTo>${project.build.directory}/itest</cloneProjectsTo>
           <goals>
             <goal>clean</goal>
-            <goal>package</goal>
+            <goal>verify</goal>
           </goals>
           <settingsFile>${basedir}/src/itest/settings.xml</settingsFile>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>

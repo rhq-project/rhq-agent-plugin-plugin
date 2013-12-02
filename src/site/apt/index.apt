@@ -23,13 +23,13 @@ RHQ Agent Plugin Plugin
 
   * {{{./executing-cli.html}CLI script or command execution}}
 
+  * {{{./setting-up-test-plugin-container.html}Standalone Plugin Container setup for integration tests}}
+
 * Planned
 
   * Validation of plugins depending on other plugins (ie depending on the JMX plugin)
 
   * Agent Plugin project generation
-
-  * Standalone Plugin Container setup for integration tests
 
   * Plugin Documentation generation
 

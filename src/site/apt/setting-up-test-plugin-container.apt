@@ -1,0 +1,136 @@
+Setting up a test Plugin Container
+
+ Writing unit tests for your discovery and component classes is a good practice. You can do even better and write
+ integration tests which will start a standalone plugin container.
+
+ The standalone plugin container needs to find:
+
+  * the Platform plugin
+
+  * your agent plugin
+
+  * any other agent plugin your plugin is depending on
+
+  * the native system information libraries (SIGAR)
+
+ The <setup-test-plugin-container> mojo will prepare what the standalone plugin container needs. By defaut, it creates
+ a <$\{project.build.directory\}/itest> directory and copies the required plugins under
+ <$\{project.build.directory\}/itest/plugins> and the native libraries under <$\{project.build.directory\}/itest/lib>.
+
+ You must configure the Maven Failsafe plugin to tell SIGAR where to find the libraries (<org.hyperic.sigar.path>
+ system property, see example below).
+
+* TestNG sample
+
++---
+    ...
+    public static final String PLUGIN_NAME = "TestPlugin";
+
+    private static PluginContainer pluginContainer;
+
+    private static PluginEnvironment pluginEnvironment;
+
+    @BeforeSuite
+    public void start() {
+        File pluginDir = new File("target/itest/plugins");
+        PluginContainerConfiguration pcConfig = new PluginContainerConfiguration();
+        pcConfig.setPluginFinder(new FileSystemPluginFinder(pluginDir));
+        pcConfig.setPluginDirectory(pluginDir);
+        pcConfig.setInsideAgent(false);
+        pluginContainer = PluginContainer.getInstance();
+        pluginContainer.setConfiguration(pcConfig);
+        pluginContainer.initialize();
+        pluginEnvironment = pluginContainer.getPluginManager().getPlugin(PLUGIN_NAME);
+    }
+
+    @AfterSuite
+    public void stop() {
+        pluginContainer.shutdown();
+    }
+
+    @Test
+    public void testNativeSystemAvailable() {
+        SystemInfo systemInfo = SystemInfoFactory.createSystemInfo();
+        assertTrue(systemInfo.isNative(), "Native system should be available");
+    }
+
+    @Test
+    public void testPluginLoaded() {
+        assertNotNull(pluginEnvironment, "Plugin not loaded");
+        assertEquals(pluginEnvironment.getPluginName(), PLUGIN_NAME);
+    }
+    ...
++---
+
+* Plugin Execution Sample
+
++---
+    ...
+    <plugin>
+        <groupId>org.rhq.maven.plugins</groupId>
+        <artifactId>rhq-agent-plugin-plugin</artifactId>
+        <version>${rhq-agent-plugin-plugin.version}</version>
+        <!-- Tell Maven that this plugin will extend the standard lifecycle and packaging -->
+        <!-- Without this the build fails to recognize the custom packaging -->
+        <extensions>true</extensions>
+        <configuration>
+            <!-- Here comes the project manifest customization  -->
+            <archive>
+                <manifest>
+                    <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                </manifest>
+                <manifestEntries>
+                    <Maven-Version>${maven.version}</Maven-Version>
+                    <Java-Version>${java.version}</Java-Version>
+                    <Java-Vendor>${java.vendor}</Java-Vendor>
+                    <Os-Name>${os.name}</Os-Name>
+                    <Os-Arch>${os.arch}</Os-Arch>
+                    <Os-Version>${os.version}</Os-Version>
+                </manifestEntries>
+            </archive>
+        </configuration>
+        <executions>
+            <execution>
+                <id>setup-test-plugin-container</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                    <goal>setup-test-plugin-container</goal>
+                </goals>
+                <configuration>
+                    <rhqVersion>${rhq.version}</rhqVersion>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
+
+    <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+            <excludes>
+                <exclude>itest/**</exclude>
+            </excludes>
+        </configuration>
+    </plugin>
+
+    <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+            <includes>
+                <include>itest/**</include>
+            </includes>
+        </configuration>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>integration-test</goal>
+                    <goal>verify</goal>
+                </goals>
+                <configuration>
+                    <argLine>-Dorg.hyperic.sigar.path=${project.build.directory}/itest/lib</argLine>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
+    ...
++---

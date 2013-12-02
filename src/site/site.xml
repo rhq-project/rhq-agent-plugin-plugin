@@ -53,6 +53,7 @@
       <item name="Deploying to a local RHQ server" href="deploying.html" />
       <item name="Uploading to a remote RHQ server" href="uploading.html" />
       <item name="Executing a CLI script or command" href="executing-cli.html" />
+      <item name="Setting up a test Plugin Container" href="setting-up-test-plugin-container.html" />
     </menu>
 
     <menu name="Reference">
