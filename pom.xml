@@ -45,6 +45,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven-javadoc-plugin.version>2.9</maven-javadoc-plugin.version>
     <httpclient4.version>4.2.5</httpclient4.version>
+    <fastBuild>false</fastBuild>
   </properties>
 
   <dependencyManagement>
@@ -196,6 +197,8 @@
         <artifactId>maven-invoker-plugin</artifactId>
         <version>1.8</version>
         <configuration>
+          <skipInstallation>${fastBuild}</skipInstallation>
+          <skipInvocation>${fastBuild}</skipInvocation>
           <projectsDirectory>${basedir}/src/itest</projectsDirectory>
           <cloneProjectsTo>${project.build.directory}/itest</cloneProjectsTo>
           <goals>
@@ -221,6 +224,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <version>2.2.1</version>
+        <configuration>
+          <skipSource>${fastBuild}</skipSource>
+        </configuration>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -234,6 +240,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${maven-javadoc-plugin.version}</version>
+        <configuration>
+          <skip>${fastBuild}</skip>
+        </configuration>
         <executions>
           <execution>
             <id>attach-javadocs</id>

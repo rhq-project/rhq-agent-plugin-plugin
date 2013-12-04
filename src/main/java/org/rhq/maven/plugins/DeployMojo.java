@@ -32,6 +32,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.FileUtils;
 
+import static org.rhq.maven.plugins.Utils.getAgentPluginArchiveFile;
+
 /**
  * Deploy a freshly built RHQ Agent Plugin to an RHQ container.
  *
@@ -66,7 +68,7 @@ public class DeployMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        File agentPluginArchive = PackageMojo.getAgentPluginArchiveFile(buildDirectory, finalName);
+        File agentPluginArchive = getAgentPluginArchiveFile(buildDirectory, finalName);
         if (!agentPluginArchive.exists() && agentPluginArchive.isFile()) {
             throw new MojoExecutionException("Agent plugin archive does not exist: " + agentPluginArchive);
         }

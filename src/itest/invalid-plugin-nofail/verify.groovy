@@ -18,8 +18,5 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
-import java.util.jar.JarFile
-
 def pluginFile = new File(basedir, "target/invalid-plugin-nofail-1.0-SNAPSHOT.jar")
 assert pluginFile.isFile(): pluginFile + " is not a file"

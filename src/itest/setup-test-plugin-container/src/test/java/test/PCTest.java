@@ -34,9 +34,9 @@ import org.rhq.core.pc.plugin.PluginEnvironment;
 import org.rhq.core.system.SystemInfo;
 import org.rhq.core.system.SystemInfoFactory;
 
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 public class PCTest {
 

@@ -23,8 +23,6 @@ package org.rhq.maven.plugins;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
@@ -37,7 +35,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.zeroturnaround.zip.ZipUtil;
 
@@ -180,32 +177,6 @@ public abstract class AbstractExecCliMojo extends AbstractMojo {
             getLog().warn("Found more than one RHQ CLI start Script: " + files);
         }
         return null;
-    }
-
-    protected void redirectOuput(Process process) {
-        startCopyThread(process.getInputStream(), System.out);
-        startCopyThread(process.getErrorStream(), System.err);
-    }
-
-    protected void startCopyThread(final InputStream inputStream, final PrintStream printStream) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    IOUtil.copy(inputStream, printStream);
-                } catch (IOException ignore) {
-                }
-            }
-        });
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    protected void handleProblem(String message) throws MojoExecutionException {
-        if (failOnError) {
-            throw new MojoExecutionException(message);
-        }
-        getLog().error(message);
     }
 
     protected void handleFailure(String message) throws MojoFailureException {

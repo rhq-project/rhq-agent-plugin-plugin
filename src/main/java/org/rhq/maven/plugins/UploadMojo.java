@@ -51,6 +51,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static org.rhq.maven.plugins.Utils.getAgentPluginArchiveFile;
+
 /**
  * Upload a freshly built RHQ Agent Plugin to an RHQ container.
  *
@@ -121,7 +123,7 @@ public class UploadMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        File agentPluginArchive = PackageMojo.getAgentPluginArchiveFile(buildDirectory, finalName);
+        File agentPluginArchive = getAgentPluginArchiveFile(buildDirectory, finalName);
         if (!agentPluginArchive.exists() && agentPluginArchive.isFile()) {
             throw new MojoExecutionException("Agent plugin archive does not exist: " + agentPluginArchive);
         }
@@ -212,8 +214,7 @@ public class UploadMojo extends AbstractMojo {
                 .setHost(host) //
                 .setPort(port) //
                 .setPath(REST_CONTENT_URI + "/" + contentHandle + "/plugins") //
-                .setParameter("name", //
-                        PackageMojo.getAgentPluginArchiveFile(buildDirectory, finalName).getName()) //
+                .setParameter("name", getAgentPluginArchiveFile(buildDirectory, finalName).getName()) //
                 .setParameter("startScan", String.valueOf(startScan)) //
                 .build();
     }

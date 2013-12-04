@@ -22,16 +22,13 @@
 package org.rhq.maven.plugins;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -48,20 +45,25 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+
+import static org.codehaus.plexus.util.StringUtils.join;
+import static org.rhq.maven.plugins.Utils.findParentPlugins;
+import static org.rhq.maven.plugins.Utils.getAgentPluginArchiveFile;
+import static org.rhq.maven.plugins.Utils.redirectOuput;
 
 /**
  * Validates a freshly built RHQ Agent Plugin.
  *
  * @author Thomas Segismont
  */
-@Mojo(name = "validate", defaultPhase = LifecyclePhase.PACKAGE, threadSafe = true)
+@Mojo(name = "validate", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope
+        .COMPILE, threadSafe = true)
 public class ValidateMojo extends AbstractMojo {
 
     private static final String PLUGIN_VALIDATOR_MODULE_GROUP_ID = "org.rhq";
     private static final String PLUGIN_VALIDATOR_MODULE_ARTIFACT_ID = "rhq-core-plugin-container";
-    private static final String VALIDATOR_LOG4J_PROPERTIES = "validator-log4j.properties";
     private static final String PLUGIN_VALIDATOR_MAIN_CLASS = "org.rhq.core.pc.plugin.PluginValidator";
     /**
      * The build directory (root of build works)
@@ -94,34 +96,39 @@ public class ValidateMojo extends AbstractMojo {
     private ArtifactRepository localRepository;
 
     @Component
+    private MavenProject project;
+
+    @Component
     private ArtifactFactory artifactFactory;
 
     @Component
     private ArtifactResolver artifactResolver;
+
     @Component
     private ArtifactMetadataSource artifactMetadataSource;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        File agentPluginArchive = PackageMojo.getAgentPluginArchiveFile(buildDirectory, finalName);
+        File agentPluginArchive = getAgentPluginArchiveFile(buildDirectory, finalName);
         if (!agentPluginArchive.exists() && agentPluginArchive.isFile()) {
             throw new MojoExecutionException("Agent plugin archive does not exist: " + agentPluginArchive);
         }
-        validate(agentPluginArchive);
+        Set<File> parentPlugins;
+        try {
+            parentPlugins = findParentPlugins(project);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error while searching for parent plugins", e);
+        }
+        validate(agentPluginArchive, parentPlugins);
     }
 
-    private void validate(File agentPluginArchive) throws MojoExecutionException {
+    private void validate(File agentPluginArchive, Set<File> parentPlugins) throws MojoExecutionException {
         // Run the plugin validator as a forked process
         Process process = null;
         try {
-            String pluginValidatorClasspath = buildPluginValidatorClasspath();
-            String javaCommand = buildJavaCommand(pluginValidatorClasspath);
-            if (getLog().isDebugEnabled()) {
-                getLog().debug(IOUtils.LINE_SEPARATOR + "pluginValidatorClasspath = " + pluginValidatorClasspath +
-                        IOUtils.LINE_SEPARATOR + IOUtils.LINE_SEPARATOR + "javaCommand = " + javaCommand);
-            }
-            ProcessBuilder processBuilder = buildProcessBuilder(agentPluginArchive, pluginValidatorClasspath,
-                    javaCommand);
+            String pluginValidatorClasspath = buildPluginValidatorClasspath(agentPluginArchive, parentPlugins);
+            String javaCommand = buildJavaCommand();
+            ProcessBuilder processBuilder = buildProcessBuilder(javaCommand, pluginValidatorClasspath);
             process = processBuilder.start();
             redirectOuput(process);
             int exitCode = process.waitFor();
@@ -137,7 +144,8 @@ public class ValidateMojo extends AbstractMojo {
         }
     }
 
-    private String buildPluginValidatorClasspath() throws ArtifactNotFoundException, ArtifactResolutionException,
+    private String buildPluginValidatorClasspath(File agentPluginArchive, Set<File> parentPlugins) throws
+            ArtifactNotFoundException, ArtifactResolutionException,
             IOException {
         // Resolve dependencies of the plugin validator module
         Artifact dummyOriginatingArtifact =
@@ -162,60 +170,41 @@ public class ValidateMojo extends AbstractMojo {
             }
         }
 
-        // The plugin validator module does not provide a log4 configuration file so we provide one
-        File directory = new File(buildDirectory, "validator-log4j");
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
-        classpathElements.add(directory.getAbsolutePath());
-        File log4jFile = new File(directory, VALIDATOR_LOG4J_PROPERTIES);
-        FileOutputStream outputStream = null;
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(VALIDATOR_LOG4J_PROPERTIES);
-        try {
-            outputStream = new FileOutputStream(log4jFile);
-            IOUtil.copy(inputStream, outputStream);
-        } finally {
-            IOUtil.close(inputStream);
-            IOUtil.close(outputStream);
+        classpathElements.add(agentPluginArchive.getAbsolutePath());
+
+        for (File parentPlugin : parentPlugins) {
+            classpathElements.add(parentPlugin.getAbsolutePath());
         }
 
-        return StringUtils.join(classpathElements.iterator(), File.pathSeparator);
+        String pluginValidatorClasspath = join(classpathElements.iterator(), File.pathSeparator);
+
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("pluginValidatorClasspath = " + pluginValidatorClasspath);
+        }
+
+        return pluginValidatorClasspath;
     }
 
-    private String buildJavaCommand(String pluginValidatorClasspath) {
+    private String buildJavaCommand() {
         String javaHome = System.getProperty("java.home");
-        return javaHome + File.separator + "bin" + File.separator + "java";
+        String javaCommand = javaHome + File.separator + "bin" + File.separator + "java";
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("javaCommand = " + javaCommand);
+        }
+        return javaCommand;
     }
 
-    private ProcessBuilder buildProcessBuilder(File agentPluginArchive, String pluginValidatorClasspath,
-                                               String javaCommand) {
-        return new ProcessBuilder() //
-                .directory(buildDirectory) //
-                .command(javaCommand, //
-                        "-classpath", //
-                        pluginValidatorClasspath, //
-                        "-Dlog4j.configuration=" + VALIDATOR_LOG4J_PROPERTIES, //
-                        PLUGIN_VALIDATOR_MAIN_CLASS, //
-                        agentPluginArchive.getAbsolutePath());
-    }
-
-    private void redirectOuput(Process process) {
-        startCopyThread(process.getInputStream(), System.out);
-        startCopyThread(process.getErrorStream(), System.err);
-    }
-
-    private void startCopyThread(final InputStream inputStream, final PrintStream printStream) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    IOUtil.copy(inputStream, printStream);
-                } catch (IOException ignore) {
-                }
-            }
-        });
-        thread.setDaemon(true);
-        thread.start();
+    private ProcessBuilder buildProcessBuilder(String javaCommand, String pluginValidatorClasspath) {
+        List<String> command = new LinkedList<String>();
+        command.add(javaCommand);
+        command.add("-classpath");
+        command.add(pluginValidatorClasspath);
+        command.add("-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.SimpleLog");
+        command.add(PLUGIN_VALIDATOR_MAIN_CLASS);
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("Built command to execute = " + join(command.iterator(), " "));
+        }
+        return new ProcessBuilder().directory(buildDirectory).command(command);
     }
 
     private void handleFailure(String message) throws MojoFailureException {

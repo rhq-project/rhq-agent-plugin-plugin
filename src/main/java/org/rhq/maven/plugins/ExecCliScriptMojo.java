@@ -34,6 +34,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.StringUtils;
 
+import static org.rhq.maven.plugins.Utils.redirectOuput;
+
 /**
  * Execute a CLI script.
  *

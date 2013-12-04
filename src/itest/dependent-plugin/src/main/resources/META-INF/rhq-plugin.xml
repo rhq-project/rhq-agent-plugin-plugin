@@ -24,15 +24,14 @@
         displayName="Test Plugin"
         package="test.plugin"
         description="A Test Plugin"
-        version="1.0"
         xmlns="urn:xmlns:rhq-plugin"
         xmlns:c="urn:xmlns:rhq-configuration">
 
-  <service name="SimpleService"
-           discovery="SimpleServiceDiscoveryComponent"
-           class="SimpleServiceComponent"
-           supportsManualAdd="true"
-           description="A Simple Service">
+  <server name="SimpleServer"
+          discovery="SimpleServerDiscoveryComponent"
+          class="SimpleServerComponent"
+          supportsManualAdd="true"
+          description="A Simple Server">
 
     <plugin-configuration>
       <c:simple-property name="prop1" description="Property 1" />
@@ -42,6 +41,22 @@
     <metric property="aTrait" displayType="summary" dataType="trait" description="A Trait" />
     <metric property="aMetric" units="milliseconds" displayType="summary" description="A Metric" />
 
-  </service>
+    <server
+        name="Server JVM"
+        description="JVM of the Server"
+        sourcePlugin="JMX"
+        sourceType="JMX Server"
+        discovery="org.rhq.plugins.jmx.EmbeddedJMXServerDiscoveryComponent"
+        class="org.rhq.plugins.jmx.EmbeddedJMXServerComponent"
+        singleton="true">
+
+      <plugin-configuration>
+        <c:simple-property name="type" type="string" default="PARENT" readOnly="true"
+                           description="The EMS connection type for this JVM (cannot be modified)" />
+      </plugin-configuration>
+
+    </server>
+
+  </server>
 
 </plugin>

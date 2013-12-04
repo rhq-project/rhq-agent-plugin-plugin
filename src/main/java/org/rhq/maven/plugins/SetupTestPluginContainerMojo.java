@@ -44,17 +44,26 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.io.RawInputStreamFacade;
 import org.zeroturnaround.zip.ZipEntryCallback;
 import org.zeroturnaround.zip.ZipUtil;
+
+import static org.codehaus.plexus.util.FileUtils.copyStreamToFile;
+import static org.codehaus.plexus.util.FileUtils.forceDelete;
+import static org.codehaus.plexus.util.FileUtils.forceMkdir;
+import static org.rhq.maven.plugins.Utils.findParentPlugins;
+import static org.rhq.maven.plugins.Utils.getAgentPluginArchiveFile;
 
 /**
  * Setup a directory with all files needed to start a test plugin container.
  *
  * @author Thomas Segismont
  */
-@Mojo(name = "setup-test-plugin-container", defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST, threadSafe = true)
+@Mojo(name = "setup-test-plugin-container", defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST,
+        requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
 public class SetupTestPluginContainerMojo extends AbstractMojo {
 
     private static final String RHQ_PLATFORM_PLUGIN_GROUP_ID = "org.rhq";
@@ -93,6 +102,9 @@ public class SetupTestPluginContainerMojo extends AbstractMojo {
     private ArtifactRepository localRepository;
 
     @Component
+    private MavenProject project;
+
+    @Component
     private ArtifactFactory artifactFactory;
 
     @Component
@@ -111,8 +123,15 @@ public class SetupTestPluginContainerMojo extends AbstractMojo {
         File platformPluginFile = findPlatformPluginFile(platformPluginResolutionResult);
         Set<File> requiredPlugins = new HashSet<File>();
         requiredPlugins.add(platformPluginFile);
-        File agentPluginArchive = PackageMojo.getAgentPluginArchiveFile(buildDirectory, finalName);
+        File agentPluginArchive = getAgentPluginArchiveFile(buildDirectory, finalName);
         requiredPlugins.add(agentPluginArchive);
+        Set<File> parentPlugins;
+        try {
+            parentPlugins = findParentPlugins(project);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error while searching for parent plugins", e);
+        }
+        requiredPlugins.addAll(parentPlugins);
         copyRequiredPlugins(pluginsDirectory, requiredPlugins);
         File sigarDistributionFile = findSigarDistributionFile(platformPluginResolutionResult);
         copySigarLibs(libDirectory, sigarDistributionFile);
@@ -120,7 +139,7 @@ public class SetupTestPluginContainerMojo extends AbstractMojo {
 
     private void deleteItestDirectoryIfExists() throws MojoExecutionException {
         try {
-            FileUtils.forceDelete(itestDirectory);
+            forceDelete(itestDirectory);
         } catch (IOException e) {
             throw new MojoExecutionException("Could not delete" + itestDirectory.getAbsolutePath(), e);
         }
@@ -128,7 +147,7 @@ public class SetupTestPluginContainerMojo extends AbstractMojo {
 
     private void createItestDirectory() throws MojoExecutionException {
         try {
-            FileUtils.forceMkdir(itestDirectory);
+            forceMkdir(itestDirectory);
             getLog().info("Created itest directory: " + itestDirectory.getAbsolutePath());
         } catch (IOException e) {
             throw new MojoExecutionException("Could not create" + itestDirectory.getAbsolutePath(), e);
@@ -138,7 +157,7 @@ public class SetupTestPluginContainerMojo extends AbstractMojo {
     private File createChildDirectory(String childDirectoryName) throws MojoExecutionException {
         File childDirectory = new File(itestDirectory, childDirectoryName);
         try {
-            FileUtils.forceMkdir(childDirectory);
+            forceMkdir(childDirectory);
         } catch (IOException e) {
             throw new MojoExecutionException("Could not create child directory " + childDirectory.getAbsolutePath(), e);
         }
@@ -180,7 +199,6 @@ public class SetupTestPluginContainerMojo extends AbstractMojo {
             try {
                 getLog().info("Copying " + requiredPlugin.getAbsolutePath() + " to " + pluginsDirectory);
                 FileUtils.copyFileToDirectory(requiredPlugin, pluginsDirectory);
-                break;
             } catch (Exception e) {
                 throw new MojoExecutionException("Could not copy plugin file " + requiredPlugin
                         .getAbsolutePath(), e);
@@ -214,7 +232,7 @@ public class SetupTestPluginContainerMojo extends AbstractMojo {
                                 compressedFileName.endsWith(".sl") || compressedFileName.endsWith(".dylib")
                                 || compressedFileName.equals("sigar.jar")) {
                             File destinationFile = new File(libDirectory, compressedFileName);
-                            FileUtils.copyStreamToFile(new RawInputStreamFacade(in), destinationFile);
+                            copyStreamToFile(new RawInputStreamFacade(in), destinationFile);
                         }
                     }
                 }

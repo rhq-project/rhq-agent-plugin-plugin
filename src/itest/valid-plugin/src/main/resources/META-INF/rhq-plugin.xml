@@ -38,8 +38,8 @@
       <c:simple-property name="prop2" description="Property 2" />
     </plugin-configuration>
 
-    <metric property="aTrait" displayType="summary" dataType="trait" description="A Trait"/>
-    <metric property="aMetric" units="milliseconds" displayType="summary" description="A Metric"/>
+    <metric property="aTrait" displayType="summary" dataType="trait" description="A Trait" />
+    <metric property="aMetric" units="milliseconds" displayType="summary" description="A Metric" />
 
   </service>
 

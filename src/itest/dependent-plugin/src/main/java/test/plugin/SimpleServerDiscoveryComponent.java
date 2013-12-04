@@ -28,7 +28,7 @@ import org.rhq.core.pluginapi.inventory.InvalidPluginConfigurationException;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryComponent;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
 
-public class SimpleServiceDiscoveryComponent implements ResourceDiscoveryComponent {
+public class SimpleServerDiscoveryComponent implements ResourceDiscoveryComponent {
 
     @Override
     public Set<DiscoveredResourceDetails> discoverResources(ResourceDiscoveryContext context)

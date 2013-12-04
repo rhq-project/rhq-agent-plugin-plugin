@@ -33,6 +33,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.StringUtils;
 
+import static org.codehaus.plexus.util.StringUtils.join;
+import static org.rhq.maven.plugins.Utils.redirectOuput;
+
 /**
  * Execute a CLI command.
  *
@@ -95,7 +98,7 @@ public class ExecCliCommandMojo extends AbstractExecCliMojo {
         commandParts.add("-c");
         commandParts.add(command);
         if (getLog().isDebugEnabled()) {
-            getLog().debug("Built command to execute = " + StringUtils.join(commandParts.iterator(), " "));
+            getLog().debug("Built command to execute = " + join(commandParts.iterator(), " "));
         }
         return commandParts;
     }

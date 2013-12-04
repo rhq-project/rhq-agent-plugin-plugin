@@ -25,9 +25,9 @@ RHQ Agent Plugin Plugin
 
   * {{{./setting-up-test-plugin-container.html}Standalone Plugin Container setup for integration tests}}
 
-* Planned
+  * Support for dependent plugins (with respect to validation and test Plugin Container setup)
 
-  * Validation of plugins depending on other plugins (ie depending on the JMX plugin)
+* Planned
 
   * Agent Plugin project generation
 

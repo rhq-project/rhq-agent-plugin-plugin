@@ -41,7 +41,11 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
-import org.codehaus.plexus.util.FileUtils;
+
+import static org.codehaus.plexus.util.FileUtils.copyFileToDirectory;
+import static org.codehaus.plexus.util.FileUtils.forceDelete;
+import static org.rhq.maven.plugins.Utils.getAgentPluginArchiveFile;
+import static org.rhq.maven.plugins.Utils.isAgentPlugin;
 
 /**
  * Package a freshly built RHQ Agent Plugin.
@@ -113,7 +117,7 @@ public class PackageMojo extends AbstractMojo {
         if (libDirectory.exists()) {
             // Clean the lib working directory
             try {
-                FileUtils.forceDelete(libDirectory);
+                forceDelete(libDirectory);
             } catch (IOException e) {
                 throw new MojoExecutionException("Unable to delete " + libDirectory, e);
             }
@@ -136,7 +140,11 @@ public class PackageMojo extends AbstractMojo {
                 }
                 if (!artifact.isOptional() && artifact.getType().equals("jar") && artifactFilter.include(artifact)) {
                     getLog().info("Added " + artifact + " library to the plugin archive");
-                    FileUtils.copyFileToDirectory(artifact.getFile(), libDirectory);
+                    copyFileToDirectory(artifact.getFile(), libDirectory);
+                    if (isAgentPlugin(artifact.getFile())) {
+                        getLog().warn(artifact.getFile().getName() + " is an agent plugin and should not be shipped " +
+                                "with your plugin");
+                    }
                 }
             }
             // This directory will exist only if at least one dependency was added
@@ -155,9 +163,4 @@ public class PackageMojo extends AbstractMojo {
 
         return agentPluginArchive;
     }
-
-    static File getAgentPluginArchiveFile(File buildDirectory, String finalName) {
-        return new File(buildDirectory, finalName + ".jar");
-    }
-
 }

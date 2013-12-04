@@ -23,16 +23,30 @@ package test.plugin;
 
 import java.util.Set;
 
-import org.rhq.core.pluginapi.inventory.DiscoveredResourceDetails;
+import org.rhq.core.domain.measurement.AvailabilityType;
+import org.rhq.core.domain.measurement.MeasurementReport;
+import org.rhq.core.domain.measurement.MeasurementScheduleRequest;
 import org.rhq.core.pluginapi.inventory.InvalidPluginConfigurationException;
-import org.rhq.core.pluginapi.inventory.ResourceDiscoveryComponent;
-import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
+import org.rhq.core.pluginapi.inventory.ResourceComponent;
+import org.rhq.core.pluginapi.inventory.ResourceContext;
+import org.rhq.core.pluginapi.measurement.MeasurementFacet;
 
-public class SimpleServiceDiscoveryComponent implements ResourceDiscoveryComponent {
+public class SimpleServerComponent implements ResourceComponent, MeasurementFacet {
 
     @Override
-    public Set<DiscoveredResourceDetails> discoverResources(ResourceDiscoveryContext context)
-            throws InvalidPluginConfigurationException, Exception {
+    public void start(ResourceContext resourceContext) throws InvalidPluginConfigurationException {
+    }
+
+    @Override
+    public void stop() {
+    }
+
+    @Override
+    public AvailabilityType getAvailability() {
         return null;
+    }
+
+    @Override
+    public void getValues(MeasurementReport report, Set<MeasurementScheduleRequest> metrics) throws Exception {
     }
 }
