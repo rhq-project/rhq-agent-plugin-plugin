@@ -1,7 +1,13 @@
 How to use the plugin?
 
+* From v0.5 and on
 
- Currently, this plugin is {{{https://bintray.com/repo/browse/tsegismont/rhq-maven-plugins}published on Bintray}}.
+ The plugin is published on Maven Central and on JBoss Releases repositories. You no longer need to configure your
+ Maven settings file.
+
+* Before v0.5
+
+ Before v0.5, the plugin was {{{https://bintray.com/repo/browse/tsegismont/rhq-maven-plugins}published on Bintray}}.
 
  You must configure your Maven settings file to enable the Bintray repository:
 
