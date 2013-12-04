@@ -66,8 +66,17 @@ public class DeployMojo extends AbstractMojo {
     @Parameter(defaultValue = "true")
     private boolean failOnError;
 
+    /**
+     * Whether to skip the execution of this mojo.
+     */
+    @Parameter(defaultValue = "false")
+    private boolean skipDeploy;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (skipDeploy) {
+            getLog().info("Skipped execution");
+        }
         File agentPluginArchive = getAgentPluginArchiveFile(buildDirectory, finalName);
         if (!agentPluginArchive.exists() && agentPluginArchive.isFile()) {
             throw new MojoExecutionException("Agent plugin archive does not exist: " + agentPluginArchive);

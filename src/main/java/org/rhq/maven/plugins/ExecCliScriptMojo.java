@@ -64,6 +64,17 @@ public class ExecCliScriptMojo extends AbstractExecCliMojo {
     @Parameter(defaultValue = "indexed")
     private String argsStyle;
 
+    /**
+     * Whether to skip the execution of this mojo.
+     */
+    @Parameter(defaultValue = "false")
+    private boolean skipExecCliScript;
+
+    @Override
+    protected boolean shouldSkip() {
+        return skipExecCliScript;
+    }
+
     @Override
     protected void validateParams() throws MojoExecutionException, MojoFailureException {
         if (!scriptFile.isFile()) {

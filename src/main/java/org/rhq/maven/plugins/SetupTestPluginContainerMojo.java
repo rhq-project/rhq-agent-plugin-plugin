@@ -75,7 +75,7 @@ public class SetupTestPluginContainerMojo extends AbstractMojo {
      * The build directory (root of build works).
      */
     @Parameter(defaultValue = "${project.build.directory}", required = true, readonly = true)
-    protected File buildDirectory;
+    private File buildDirectory;
 
     /**
      * The name of the generated RHQ agent plugin archive
@@ -87,13 +87,19 @@ public class SetupTestPluginContainerMojo extends AbstractMojo {
      * The CLI directory (where to install the RHQ CLI).
      */
     @Parameter(defaultValue = "${project.build.directory}/itest", required = true)
-    protected File itestDirectory;
+    private File itestDirectory;
 
     /**
      * Version of the RHQ Platform Plugin.
      */
     @Parameter(required = true)
-    protected String rhqVersion;
+    private String rhqVersion;
+
+    /**
+     * Whether to skip the execution of this mojo.
+     */
+    @Parameter(defaultValue = "false")
+    private boolean skipSetupTestPluginContainer;
 
     @Parameter(defaultValue = "${project.remoteArtifactRepositories}", required = true, readonly = true)
     private List remoteRepositories;
@@ -115,6 +121,9 @@ public class SetupTestPluginContainerMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (skipSetupTestPluginContainer) {
+            getLog().info("Skipped execution");
+        }
         deleteItestDirectoryIfExists();
         createItestDirectory();
         File pluginsDirectory = createChildDirectory("plugins");

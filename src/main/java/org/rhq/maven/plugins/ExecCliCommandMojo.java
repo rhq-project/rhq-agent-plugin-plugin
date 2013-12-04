@@ -50,6 +50,17 @@ public class ExecCliCommandMojo extends AbstractExecCliMojo {
     @Parameter(required = true)
     private String command;
 
+    /**
+     * Whether to skip the execution of this mojo.
+     */
+    @Parameter(defaultValue = "false")
+    private boolean skipExecCliCommand;
+
+    @Override
+    protected boolean shouldSkip() {
+        return skipExecCliCommand;
+    }
+
     @Override
     protected void validateParams() throws MojoExecutionException, MojoFailureException {
         if (StringUtils.isBlank(command)) {

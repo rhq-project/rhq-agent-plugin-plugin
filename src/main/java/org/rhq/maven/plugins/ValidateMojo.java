@@ -89,6 +89,12 @@ public class ValidateMojo extends AbstractMojo {
     @Parameter(defaultValue = "true")
     private boolean failOnError;
 
+    /**
+     * Whether to skip the execution of this mojo.
+     */
+    @Parameter(defaultValue = "false")
+    private boolean skipValidate;
+
     @Parameter(defaultValue = "${project.remoteArtifactRepositories}", required = true, readonly = true)
     private List remoteRepositories;
 
@@ -109,6 +115,9 @@ public class ValidateMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (skipValidate) {
+            getLog().info("Skipped execution");
+        }
         File agentPluginArchive = getAgentPluginArchiveFile(buildDirectory, finalName);
         if (!agentPluginArchive.exists() && agentPluginArchive.isFile()) {
             throw new MojoExecutionException("Agent plugin archive does not exist: " + agentPluginArchive);

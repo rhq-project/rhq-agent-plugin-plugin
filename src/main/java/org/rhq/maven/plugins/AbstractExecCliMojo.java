@@ -116,11 +116,16 @@ public abstract class AbstractExecCliMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (shouldSkip()) {
+            getLog().info("Skipped execution");
+        }
         validateCommonParams();
         validateParams();
         installRhqCLi();
         doExecute();
     }
+
+    protected abstract boolean shouldSkip();
 
     private void validateCommonParams() throws MojoExecutionException {
         if (login) {
