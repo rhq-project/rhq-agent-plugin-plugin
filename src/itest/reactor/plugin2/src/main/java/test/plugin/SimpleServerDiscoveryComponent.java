@@ -19,8 +19,20 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-def sampleJsOutput = new File(basedir, "target/sample.js.out")
-assert sampleJsOutput.isFile(): sampleJsOutput + " is not a file"
+package test.plugin;
 
-def content = new File(basedir, "target/sample.js.out").text
-assert content.contains("Hello Maven Invoker!")
+import java.util.Set;
+
+import org.rhq.core.pluginapi.inventory.DiscoveredResourceDetails;
+import org.rhq.core.pluginapi.inventory.InvalidPluginConfigurationException;
+import org.rhq.core.pluginapi.inventory.ResourceDiscoveryComponent;
+import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
+
+public class SimpleServerDiscoveryComponent implements ResourceDiscoveryComponent {
+
+    @Override
+    public Set<DiscoveredResourceDetails> discoverResources(ResourceDiscoveryContext context)
+            throws InvalidPluginConfigurationException, Exception {
+        return null;
+    }
+}

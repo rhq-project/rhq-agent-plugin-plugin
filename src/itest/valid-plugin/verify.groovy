@@ -19,8 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
-
 import java.util.jar.JarFile
 
 def pluginFile = new File(basedir, "target/valid-plugin-1.0-SNAPSHOT.jar")

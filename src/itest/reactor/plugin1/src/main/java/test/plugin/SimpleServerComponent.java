@@ -19,8 +19,34 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-def sampleJsOutput = new File(basedir, "target/sample.js.out")
-assert sampleJsOutput.isFile(): sampleJsOutput + " is not a file"
+package test.plugin;
 
-def content = new File(basedir, "target/sample.js.out").text
-assert content.contains("Hello Maven Invoker!")
+import java.util.Set;
+
+import org.rhq.core.domain.measurement.AvailabilityType;
+import org.rhq.core.domain.measurement.MeasurementReport;
+import org.rhq.core.domain.measurement.MeasurementScheduleRequest;
+import org.rhq.core.pluginapi.inventory.InvalidPluginConfigurationException;
+import org.rhq.core.pluginapi.inventory.ResourceComponent;
+import org.rhq.core.pluginapi.inventory.ResourceContext;
+import org.rhq.core.pluginapi.measurement.MeasurementFacet;
+
+public class SimpleServerComponent implements ResourceComponent, MeasurementFacet {
+
+    @Override
+    public void start(ResourceContext resourceContext) throws InvalidPluginConfigurationException {
+    }
+
+    @Override
+    public void stop() {
+    }
+
+    @Override
+    public AvailabilityType getAvailability() {
+        return null;
+    }
+
+    @Override
+    public void getValues(MeasurementReport report, Set<MeasurementScheduleRequest> metrics) throws Exception {
+    }
+}

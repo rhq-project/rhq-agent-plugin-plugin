@@ -19,9 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
-
-
 def pluginsDir = new File(basedir, "target/itest/plugins")
 def platformPluginFile = new File(pluginsDir, "rhq-platform-plugin-4.9.0.jar")
 assert platformPluginFile.isFile(): platformPluginFile + " is not a file"
