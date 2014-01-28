@@ -28,6 +28,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -132,6 +134,27 @@ public class ValidateMojo extends AbstractMojo {
     }
 
     private void validate(File agentPluginArchive, Set<File> parentPlugins) throws MojoExecutionException {
+        JarFile jarFile = null;
+        try {
+            jarFile = new JarFile(agentPluginArchive);
+
+            if (jarFile.getEntry("META-INF/rhq-plugin.xml") == null) {
+                handleFailure("Descriptor missing");
+            }
+        } catch (Exception e) {
+            handleException(e);
+        }
+        finally {
+           if(jarFile != null) {
+               try {
+                   jarFile.close();
+               } catch (Exception e) {
+                   handleException(e);
+               }
+           }
+
+        }
+
         // Run the plugin validator as a forked process
         Process process = null;
         try {
