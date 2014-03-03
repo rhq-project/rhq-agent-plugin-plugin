@@ -7,15 +7,15 @@ Deploying to a local RHQ server
 
 +---
     ...
+    <configuration>
+        <deployDirectory>/path/to/dev/container/plugins/dir</deployDirectory>
+    </configuration>
     <execution>
         <id>deploy-to-dev-container</id>
         <goals>
             <goal>deploy</goal>
         </goals>
         <phase>package</phase>
-        <configuration>
-            <deployDirectory>/path/to/dev/container/plugins/dir</deployDirectory>
-        </configuration>
     </execution>
     ...
 +---

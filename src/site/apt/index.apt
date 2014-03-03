@@ -9,7 +9,8 @@ RHQ Agent Plugin Plugin
  <<Great. But I know nothing about RHQ Agent Plugings...>>
 
  Then you'll want to read the {{{https://docs.jboss.org/author/display/RHQ/Plugins+-+Getting+Started}Getting Started with RHQ Agent Plugins}} wiki page first.
- You can also checkout the {{{http://www.redhat.com/f/pdf/Write_A_Plugin_WP_web.pdf}How to write a plugin for JBoss ON and RHQ Guide}} (PDF).
+ You can also checkout the {{{http://www.redhat.com/f/pdf/Write_A_Plugin_WP_web.pdf}How to write a plugin for JBoss ON and RHQ Guide}} (PDF) -
+ or the more up to date version {{{https://github.com/pilhuhn/misc_writing/tree/master/HowToWriteAnRhqPlugin}How to write a plugin}}.
 
 * Available features
 
