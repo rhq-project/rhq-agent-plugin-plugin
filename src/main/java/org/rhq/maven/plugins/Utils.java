@@ -1,6 +1,6 @@
 /*
  * RHQ Management Platform
- * Copyright 2013, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2014, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -24,7 +24,7 @@ package org.rhq.maven.plugins;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -33,8 +33,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.project.MavenProject;
 import org.zeroturnaround.zip.ZipUtil;
-
-import static org.codehaus.plexus.util.IOUtil.copy;
 
 /**
  * @author Thomas Segismont
@@ -65,17 +63,25 @@ public class Utils {
         return ZipUtil.containsEntry(jarFile, "META-INF/rhq-plugin.xml");
     }
 
+    public static void redirectInput(Process process) {
+        startCopyThread(System.in, process.getOutputStream());
+    }
+
     public static void redirectOuput(Process process) {
         startCopyThread(process.getInputStream(), System.out);
         startCopyThread(process.getErrorStream(), System.err);
     }
 
-    public static void startCopyThread(final InputStream inputStream, final PrintStream printStream) {
+    public static void startCopyThread(final InputStream inputStream, final OutputStream outputStream) {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    copy(inputStream, printStream);
+                    byte[] buffer = new byte[1024];
+                    for (int n = inputStream.read(buffer); n != -1; n = inputStream.read(buffer)) {
+                        outputStream.write(buffer, 0, n);
+                        outputStream.flush();
+                    }
                 } catch (IOException ignore) {
                 }
             }
