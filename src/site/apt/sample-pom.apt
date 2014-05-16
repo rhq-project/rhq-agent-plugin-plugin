@@ -15,7 +15,7 @@ Sample POM
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <rhq.version>4.9.0</rhq.version>
+        <rhq.version>4.11.0</rhq.version>
     </properties>
 
     <dependencies>

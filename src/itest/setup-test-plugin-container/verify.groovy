@@ -1,6 +1,6 @@
 /*
  * RHQ Management Platform
- * Copyright 2013, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2014, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,7 +20,7 @@
  */
 
 def pluginsDir = new File(basedir, "target/itest/plugins")
-def platformPluginFile = new File(pluginsDir, "rhq-platform-plugin-4.9.0.jar")
+def platformPluginFile = new File(pluginsDir, "rhq-platform-plugin-4.11.0.jar")
 assert platformPluginFile.isFile(): platformPluginFile + " is not a file"
 def agentPluginFile = new File(pluginsDir, "setup-test-plugin-container-1.0-SNAPSHOT.jar")
 assert agentPluginFile.isFile(): agentPluginFile + " is not a file"

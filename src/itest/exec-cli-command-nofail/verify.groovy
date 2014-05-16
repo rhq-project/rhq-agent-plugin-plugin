@@ -19,15 +19,5 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-def pluginsDir = new File(basedir, "target/itest/plugins")
-def platformPluginFile = new File(pluginsDir, "rhq-platform-plugin-4.11.0.jar")
-assert platformPluginFile.isFile(): platformPluginFile + " is not a file"
-def agentPluginFile = new File(pluginsDir, "dependent-plugin-1.0-SNAPSHOT.jar")
-assert agentPluginFile.isFile(): agentPluginFile + " is not a file"
-def jmxPluginFile = new File(pluginsDir, "rhq-jmx-plugin-4.11.0.jar")
-assert jmxPluginFile.isFile(): jmxPluginFile + " is not a file"
-
-def libDir = new File(basedir, "target/itest/lib")
-assert libDir.isDirectory(): libDir + " is not a directory"
-def sigarFiles = libDir.list()
-assert "sigar.jar" in sigarFiles: "sigar.jar is not in the list of files: " + sigarFiles
+def pluginFile = new File(basedir, "target/exec-cli-command-nofail-1.0-SNAPSHOT.jar")
+assert pluginFile.isFile(): pluginFile + " is not a file"

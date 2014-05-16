@@ -24,8 +24,8 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>exec-cli-command</groupId>
-  <artifactId>exec-cli-command</artifactId>
+  <groupId>exec-cli-script-nofail</groupId>
+  <artifactId>exec-cli-script-nofail</artifactId>
   <version>1.0-SNAPSHOT</version>
   <!-- This project has the custom plugin packaging -->
   <packaging>rhq-agent-plugin</packaging>
@@ -47,14 +47,19 @@
         <extensions>true</extensions>
         <executions>
           <execution>
-            <id>exec-cli-command</id>
+            <id>exec-cli-script</id>
             <phase>package</phase>
             <goals>
-              <goal>exec-cli-command</goal>
+              <goal>exec-cli-script</goal>
             </goals>
             <configuration>
               <rhqVersion>${rhq.version}</rhqVersion>
-              <command>scriptUtil.saveBytesToFile(new java.lang.String("Hello Maven Invoker!").getBytes(), "${project.build.directory}/cli-command.out")</command>
+              <scriptFile>${basedir}/src/cli-scripts/sample.js</scriptFile>
+              <args>
+                <arg>pipo</arg>
+                <arg>molo</arg>
+              </args>
+              <failOnError>false</failOnError>
             </configuration>
           </execution>
         </executions>
