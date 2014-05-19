@@ -1,6 +1,6 @@
 /*
  * RHQ Management Platform
- * Copyright 2014, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013-2014, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataRetrievalException;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
@@ -37,6 +38,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -57,8 +59,8 @@ public class GenerateProjectMojo extends AbstractMojo {
     private static final String PLUGIN_GENERATOR_MODULE_GROUP_ID = "org.rhq.helpers";
     private static final String PLUGIN_GENERATOR_MODULE_ARTIFACT_ID = "rhq-pluginGen";
     private static final String PLUGIN_GENERATOR_MAIN_CLASS = "org.rhq.helpers.pluginGen.PluginGen";
-    //TODO expose as attribute
-    private static final String PLUGIN_GENERATOR_VERSION = "3.0.4";
+    // Use latest version
+    private static final String PLUGIN_GENERATOR_VERSION = "[1.0.0,)";
 
     @Parameter(defaultValue = "${project.remoteArtifactRepositories}", required = true, readonly = true)
     private List remoteRepositories;
@@ -100,14 +102,32 @@ public class GenerateProjectMojo extends AbstractMojo {
     }
 
     private String buildGeneratorClasspath() throws ArtifactNotFoundException,
-            ArtifactResolutionException, IOException {
-        // Resolve dependencies of the plugin validator module
-        Artifact dummyOriginatingArtifact = artifactFactory
-                .createBuildArtifact("org.apache.maven.plugins",
-                        "maven-downloader-plugin", "1.0", "jar");
+            ArtifactResolutionException, IOException, ArtifactMetadataRetrievalException {
+
+        // Find latest version of the plugin generator module
         Artifact pluginContainerArtifact = this.artifactFactory.createArtifact(
                 PLUGIN_GENERATOR_MODULE_GROUP_ID,
                 PLUGIN_GENERATOR_MODULE_ARTIFACT_ID, PLUGIN_GENERATOR_VERSION, null, "jar");
+
+        @SuppressWarnings("unchecked")
+        List<ArtifactVersion> availableVersions = artifactMetadataSource.retrieveAvailableVersions
+                (pluginContainerArtifact, localRepository,
+                remoteRepositories);
+        Collections.sort(availableVersions);
+        ArtifactVersion latestVersion = availableVersions.get(availableVersions.size() - 1);
+        if (getLog().isDebugEnabled()) {
+            getLog().debug(
+                    PLUGIN_GENERATOR_MODULE_GROUP_ID + ":" + PLUGIN_GENERATOR_MODULE_ARTIFACT_ID + ", " +
+                            "latestVersion = " + latestVersion);
+        }
+
+        // Resolve dependencies of the plugin generator module
+        pluginContainerArtifact = this.artifactFactory.createArtifact(
+                PLUGIN_GENERATOR_MODULE_GROUP_ID,
+                PLUGIN_GENERATOR_MODULE_ARTIFACT_ID, latestVersion.toString(), null, "jar");
+        Artifact dummyOriginatingArtifact = artifactFactory
+                .createBuildArtifact("org.apache.maven.plugins",
+                        "maven-downloader-plugin", "1.0", "jar");
         ArtifactResolutionResult artifactResolutionResult = artifactResolver
                 .resolveTransitively(
                         Collections.singleton(pluginContainerArtifact),
