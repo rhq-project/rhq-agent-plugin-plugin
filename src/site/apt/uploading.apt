@@ -6,6 +6,9 @@ Uploading to a remote RHQ server
  By default, after the plugin is uploaded, it will trigger a plugin scan on the server. This can be configured with the
  <startScan> attribute.
 
+ If you want agents to get the plugin update right away, use the <updatePluginsOnAllAgents> attribute. Remind that
+ <<this will make your agents' plugin containers restart>>.
+
 * Plugin Execution Sample
 
 +---
@@ -26,6 +29,10 @@ Uploading to a remote RHQ server
             <password>secret</password>
             <!-- Whether a plugin scan should be triggered on the server after upload. Optional, defaults to true -->
             <startScan>true</startScan>
+            <!-- Whether all agents should update their plugins. This will make your agents' plugin containers restart. Optional, defaults to false  -->
+            <updatePluginsOnAllAgents>true</updatePluginsOnAllAgents>
+            <!-- Whether to wait for the plugins update requests to complete.. Optional, defaults to false -->
+            <waitForPluginsUpdateOnAllAgents>true</waitForPluginsUpdateOnAllAgents>
             <!-- Whether to fail the build if an error occurs while uploading. Optional, defaults to false -->
             <failOnError>false</failOnError>
         </configuration>
