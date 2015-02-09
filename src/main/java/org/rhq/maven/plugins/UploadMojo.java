@@ -167,6 +167,7 @@ public class UploadMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skipUpload) {
             getLog().info("Skipped execution");
+            return;
         }
         File agentPluginArchive = getAgentPluginArchiveFile(buildDirectory, finalName);
         if (!agentPluginArchive.exists() && agentPluginArchive.isFile()) {

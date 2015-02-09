@@ -119,6 +119,7 @@ public class ValidateMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skipValidate) {
             getLog().info("Skipped execution");
+            return;
         }
         File agentPluginArchive = getAgentPluginArchiveFile(buildDirectory, finalName);
         if (!agentPluginArchive.exists() && agentPluginArchive.isFile()) {
